@@ -148,6 +148,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="kmzi.cpp" />
+    <ClCompile Include="OLSGenerator.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="OLSGenerator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
