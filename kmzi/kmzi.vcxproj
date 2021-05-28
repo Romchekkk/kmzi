@@ -147,12 +147,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="functions.cpp" />
     <ClCompile Include="kmzi.cpp" />
-    <ClCompile Include="OLSGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="OLSData.h" />
-    <ClInclude Include="OLSGenerator.h" />
+    <ClInclude Include="functions.h" />
+    <ClInclude Include="Data.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

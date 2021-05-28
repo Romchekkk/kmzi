@@ -1,8 +1,7 @@
 #include <iostream>
-#include "OLSData.h"
-#include <map>
 #include <ctime>
 #include <cstdlib>
+#include "functions.h"
 
 using namespace std;
 
