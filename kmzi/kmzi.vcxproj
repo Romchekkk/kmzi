@@ -151,6 +151,7 @@
     <ClCompile Include="OLSGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="OLSData.h" />
     <ClInclude Include="OLSGenerator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
