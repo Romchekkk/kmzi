@@ -8,5 +8,5 @@ using namespace std;
 int main()
 {
 	//srand(static_cast<unsigned int>(time(0)));
-	std::cout << "Hello, World!" << std::endl;
+	cout << "Hello, World!" << endl;
 }

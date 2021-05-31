@@ -22,7 +22,7 @@
     <ClInclude Include="functions.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Data.h">
+    <ClInclude Include="data.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
