@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "best_functions.h"
-
+#define Block 16
 using std::vector;
 
 // Операция *
