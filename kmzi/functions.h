@@ -27,3 +27,5 @@ vector<vector<unsigned char>> g(vector<vector<unsigned char>> key, vector<vector
 vector<unsigned char> summ(vector<unsigned char> left, vector<unsigned char> right);
 
 vector<unsigned char> gamma(vector<unsigned char> blockNumber, vector<vector<unsigned char>> calculatedKey, vector<unsigned char> i0, vector<unsigned char> alpha, vector<vector<unsigned char>> key);
+
+vector<unsigned char> AssociatedVector(vector<unsigned char> associatedMessage, vector<unsigned char> bt);

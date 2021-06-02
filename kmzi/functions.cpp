@@ -49,7 +49,7 @@ vector<vector<unsigned char>> g(vector<vector<unsigned char>> key, vector<vector
     vector<unsigned char> temp2 = QuasigroupOperation1(Lambda(QuasigroupOperation1(key[1], iv[1])), key[2]);
     for (int i = 0; i < 16; i++) {
         result[0].push_back(firstM[temp1[i]][temp2[i]]);
-        result[0].push_back(secondM[temp1[i]][temp2[i]]);
+        result[1].push_back(secondM[temp1[i]][temp2[i]]);
     }
     return result;
 }
@@ -84,6 +84,26 @@ vector<unsigned char> gamma(vector<unsigned char> blockNumber, vector<vector<uns
     vector<unsigned char> result;
     for (int i = 0; i < 16; i++) {
         result.push_back(left[i]^right[i]);
+    }
+    return result;
+}
+
+vector<unsigned char> AssociatedVector(vector<unsigned char> associatedMessage, vector<unsigned char> bt)
+{
+    vector<unsigned char> result(16, 0x00);
+    int associatedMessageLength = associatedMessage.size()/16;
+    vector<unsigned char> temp;
+    for (int i = 0; i < 16; i++) {
+        temp.push_back(associatedMessage[i]);
+    }
+    GFMult128(result, temp, bt);
+    for (int i = 1; i < associatedMessageLength; i++) {
+        temp.clear();
+        for (int j = 0; j < 16; j++) {
+            //Да пошла ты нахуя студия не будет тут больше инта блять
+            temp.push_back(associatedMessage[i*16 + j] ^ result[j]);
+        }
+        GFMult128(result, temp, bt);
     }
     return result;
 }
