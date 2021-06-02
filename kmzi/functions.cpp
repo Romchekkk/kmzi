@@ -37,7 +37,7 @@ vector<unsigned char> Phi(vector<unsigned char> x, vector<unsigned char> alpha)
 {
     vector<unsigned char> result;
     for (int i = 0; i < 16; i++) {
-        result.push_back((unsigned char)(x[i] + alpha[i]));
+        result.push_back((unsigned char)(x[i] ^ alpha[i]));
     }
     return result;
 }
