@@ -77,9 +77,9 @@ vector<unsigned char> gamma(vector<unsigned char> blockNumber, vector<vector<uns
     vector<unsigned char> wi = summ(blockNumber, i0);
     vector<unsigned char> ci = f(wi, key);
     vector<unsigned char> di = phi(ci, alpha);
-    vector<unsigned char> left;
+    vector<unsigned char> left(Block, 0);
     GFMult128(left, ci, calculatedKey[0]);
-    vector<unsigned char> right;
+    vector<unsigned char> right(Block, 0);
     GFMult128(right, di, calculatedKey[1]);
     vector<unsigned char> result;
     for (int i = 0; i < 16; i++) {
