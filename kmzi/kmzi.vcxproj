@@ -165,6 +165,7 @@
   <ItemGroup>
     <ClInclude Include="aes128.h" />
     <ClInclude Include="aes128gcm.h" />
+    <ClInclude Include="best_functions.h" />
     <ClInclude Include="functions.h" />
     <ClInclude Include="Data.h" />
   </ItemGroup>

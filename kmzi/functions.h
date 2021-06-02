@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "best_functions.h"
 
 using std::vector;
 
@@ -17,7 +18,12 @@ vector<unsigned char> Lambda(vector<unsigned char> x);
 vector<unsigned char> f(vector<unsigned char> w, vector<vector<unsigned char>> key);
 
 // Отображение фи, зависящее от константы альфа
-vector<unsigned char> Phi(vector<unsigned char> x, vector<unsigned char> alpha);
+vector<unsigned char> phi(vector<unsigned char> x, vector<unsigned char> alpha);
 
 // Отображение g(k, iv)
 vector<vector<unsigned char>> g(vector<vector<unsigned char>> key, vector<vector<unsigned char>> iv);
+
+// Сложение по модулю 2^128
+vector<unsigned char> summ(vector<unsigned char> left, vector<unsigned char> right);
+
+vector<unsigned char> gamma(vector<unsigned char> blockNumber, vector<vector<unsigned char>> calculatedKey, vector<unsigned char> i0, vector<unsigned char> alpha, vector<vector<unsigned char>> key);
