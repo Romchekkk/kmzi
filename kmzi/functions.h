@@ -14,16 +14,10 @@ vector<unsigned char> QuasigroupOperation2(vector<unsigned char> left, vector<un
 vector<unsigned char> Lambda(vector<unsigned char> x);
 
 // Отображение f(w), зависящее от ключа k
-vector<unsigned char> f(vector<unsigned char> w);
+vector<unsigned char> f(vector<unsigned char> w, vector<vector<unsigned char>> key);
 
 // Отображение фи, зависящее от константы альфа
-vector<unsigned char> Phi(vector<unsigned char> x);
-
-// Операция * с индексом iv
-vector<unsigned char> QuasigroupOperation1IV(vector<unsigned char> left, vector<unsigned char> right);
-
-// Операция *' с индексом iv
-vector<unsigned char> QuasigroupOperation2IV(vector<unsigned char> left, vector<unsigned char> right);
+vector<unsigned char> Phi(vector<unsigned char> x, vector<unsigned char> alpha);
 
 // Отображение g(k, iv)
-vector<vector<unsigned char>> g(vector<unsigned char> left, vector<unsigned char> right);
+vector<vector<unsigned char>> g(vector<vector<unsigned char>> key, vector<vector<unsigned char>> iv);
