@@ -229,7 +229,7 @@ static void GFMult128(vector<unsigned char>& Z, const vector<unsigned char> X, c
 }
 
 /* Creation of the block concatenating A, C, len(A), len(C) */
-static void ByteConcatenation(vector<unsigned char>& concat, const vector<unsigned char> A, const vector<unsigned char> C, int len_ad, int len_p, int len_total) {
+void ByteConcatenation(vector<unsigned char>& concat, const vector<unsigned char> A, const vector<unsigned char> C, int len_ad, int len_p, int len_total) {
 
 	//memset(len_c, 0, 8);					// len_c is set to 0
 	std::fill(len_c.begin(), len_c.end(), 0);

@@ -5,14 +5,14 @@
 
 /* R used for the multiplication in GF(2^128) */
 /* R = 11100001 || 0^120 */
-static vector<unsigned char> R(Block, 0xe1);
+vector<unsigned char> R(Block, 0xe1);
 
 /* V used inside the GCTR function */
-static vector<unsigned char> V(Block, 0);
+vector<unsigned char> V(Block, 0);
 
 
 /* Byte blocks received are XORed */
-static void xor_block(vector<unsigned char>& ZBLOCK, vector<unsigned char>& VBLOCK) {
+void xor_block(vector<unsigned char>& ZBLOCK, vector<unsigned char>& VBLOCK) {
 	for (int i = 0; i < Block; i++)
 	{
 		ZBLOCK[i] = ZBLOCK[i] ^ VBLOCK[i];				// Every byte of the array is XORed
@@ -20,7 +20,7 @@ static void xor_block(vector<unsigned char>& ZBLOCK, vector<unsigned char>& VBLO
 }
 
 /* The bit representation of position value is returned */
-static char BIT(unsigned char value) {
+char BIT(unsigned char value) {
 	switch (value)
 	{
 	case 7:
@@ -52,7 +52,7 @@ static char BIT(unsigned char value) {
 }
 
 /* Byte block received is shifted to the right */
-static void ShiftRight(vector<unsigned char>& SHFT) {
+void ShiftRight(vector<unsigned char>& SHFT) {
 
 	unsigned char prevcarry = 0x00;			// Carry of the previous position
 	unsigned char currcarry = 0x00;			// Carry of the current position
@@ -76,7 +76,7 @@ static void ShiftRight(vector<unsigned char>& SHFT) {
 }
 
 /* Multiplication in GF(2^128) */
-static void GFMult128(vector<unsigned char>& Z, const vector<unsigned char> X, const vector<unsigned char> YBLOCK) {
+void GFMult128(vector<unsigned char>& Z, const vector<unsigned char> X, const vector<unsigned char> YBLOCK) {
 
 	std::fill(Z.begin(), Z.end(), 0);
 	//memset(Z, 0, Block);
@@ -105,7 +105,7 @@ static void GFMult128(vector<unsigned char>& Z, const vector<unsigned char> X, c
 	}
 }
 
-static void GCTR(vector<unsigned char>& C, const vector<unsigned char> plaintext, vector<unsigned char> blockNumber, vector<vector<unsigned char>> calculatedKey, vector<unsigned char> i0, vector<unsigned char> alpha, vector<vector<unsigned char>> key, const unsigned long len_p) {
+void GCTR(vector<unsigned char>& C, const vector<unsigned char> plaintext, vector<unsigned char> blockNumber, vector<vector<unsigned char>> calculatedKey, vector<unsigned char> i0, vector<unsigned char> alpha, vector<vector<unsigned char>> key, const unsigned long len_p) {
 
 	vector<unsigned char> tempCB(Block, 0);	// Used to save the last state of CB
 	//AssignVectors(CB, J0);

@@ -100,10 +100,64 @@ vector<unsigned char> AssociatedVector(vector<unsigned char> associatedMessage, 
     for (int i = 1; i < associatedMessageLength; i++) {
         temp.clear();
         for (int j = 0; j < 16; j++) {
+
             //Да пошла ты нахуя студия не будет тут больше инта блять
             temp.push_back(associatedMessage[i*16 + j] ^ result[j]);
         }
         GFMult128(result, temp, bt);
     }
+    return result;
+}
+
+vector<vector<unsigned char>> mrt(vector<unsigned char> plaintext, vector<vector<unsigned char>> calculatedKey, vector<unsigned char> i0, vector<unsigned char> alpha, vector<vector<unsigned char>> key, unsigned long len_p)
+{
+    vector<vector<unsigned char>> result(len_p);
+
+    vector<unsigned char> tempCB;
+    vector<unsigned char> odin = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 };
+    vector<unsigned char> blockNumber = odin;
+
+    for (int i = 0; i < len_p; i++)
+    {
+        tempCB = gamma(blockNumber, calculatedKey, i0, alpha, key);
+        for (int j = 0; j < Block; j++)
+        {
+            //Да пошла ты нахуя студия не будет тут больше инта блять
+            result[i].push_back(plaintext[(i * 16) + j] ^ tempCB[j]);
+        }
+        blockNumber = summ(blockNumber, odin);
+    }
+
+    return result;
+}
+
+vector<unsigned char> immitationInsert(vector<unsigned char> A, vector<vector<unsigned char>> m, vector<vector<unsigned char>> calculatedKey)
+{
+    vector<unsigned char> result;
+    vector<unsigned char> temp;
+    vector<unsigned char> mult = A;
+
+    int len = m.size();
+
+    for (int i = 0; i < len; i++) {
+        for (int j = 0; j < 16; j++) {
+            temp.push_back( mult[j] ^ m[i][j] );
+        }
+        GFMult128(mult, temp, calculatedKey[1]);
+        temp.clear();
+    }
+
+    vector<unsigned char> lmla; // Сука че это блять я не понимаю оно же должно получитсья длины 16 блять
+
+    for (int i = 0; i < 16; i++) {
+        temp.push_back( lmla[i] ^ mult[i] );
+    }
+
+    GFMult128(mult, temp, calculatedKey[1]);
+
+    for (int i = 0; i < 16; i++) {
+        result.push_back(mult[i] ^ calculatedKey[0][i]);
+    }
+
     return result;
 }

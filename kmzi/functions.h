@@ -29,3 +29,7 @@ vector<unsigned char> summ(vector<unsigned char> left, vector<unsigned char> rig
 vector<unsigned char> gamma(vector<unsigned char> blockNumber, vector<vector<unsigned char>> calculatedKey, vector<unsigned char> i0, vector<unsigned char> alpha, vector<vector<unsigned char>> key);
 
 vector<unsigned char> AssociatedVector(vector<unsigned char> associatedMessage, vector<unsigned char> bt);
+
+vector<vector<unsigned char>> mrt(vector<unsigned char> plaintext, vector<vector<unsigned char>> calculatedKey, vector<unsigned char> i0, vector<unsigned char> alpha, vector<vector<unsigned char>> key, unsigned long len_p);
+
+vector<unsigned char> immitationInsert(vector<unsigned char> A, vector<vector<unsigned char>> m, vector<vector<unsigned char>> calculatedKey);
