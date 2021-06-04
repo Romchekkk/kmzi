@@ -32,4 +32,10 @@ vector<unsigned char> AssociatedVector(vector<unsigned char> associatedMessage, 
 
 vector<vector<unsigned char>> mrt(vector<unsigned char> plaintext, vector<vector<unsigned char>> calculatedKey, vector<unsigned char> i0, vector<unsigned char> alpha, vector<vector<unsigned char>> key, unsigned long len_p);
 
+vector<int> decToBin(int dec);
+
+vector<unsigned char> decToHex8bytes(int dec);
+
+vector<unsigned char> lenghtConcat(int lenMessage, int lenAssMessage);
+
 vector<unsigned char> immitationInsert(vector<unsigned char> A, vector<vector<unsigned char>> m, vector<vector<unsigned char>> calculatedKey);

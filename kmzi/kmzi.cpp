@@ -35,6 +35,7 @@ int main()
 	vector<unsigned char> A = AssociatedVector(associatedMessage, calculatedKey[1]);
 	
 	int len = message.size();
+
 	vector<vector<unsigned char>> m = mrt(message, calculatedKey, i0, alpha, key, len/16);
 
 	vector<unsigned char> mark = immitationInsert(A, m, calculatedKey);
@@ -47,7 +48,7 @@ int main()
 
 	result.push_back(mark);
 
-	//Сосите хуй result это результат шифрования
+	//Готово!
 
 	cout << "Hello, World!" << endl;
 }

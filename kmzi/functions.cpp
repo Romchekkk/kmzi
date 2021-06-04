@@ -131,6 +131,63 @@ vector<vector<unsigned char>> mrt(vector<unsigned char> plaintext, vector<vector
     return result;
 }
 
+vector<int> decToBin(int dec)
+{
+    vector<int> result;
+
+    while (dec != 0) {
+        if (dec % 2 == 0) {
+            result.push_back(0);
+        }
+        else {
+            result.push_back(1);
+            dec -= 1;
+        }
+        dec /= 2;
+    }
+
+    return result;
+}
+
+vector<unsigned char> decToHex8bytes(int dec)
+{
+    vector<unsigned char> result(8, 0x00);
+
+    vector<int> bin = decToBin(dec);
+
+    while (bin.size() % 8 != 0) {
+        bin.push_back(0);
+    }
+
+    int len = bin.size() / 8;
+
+    for (int i = 0; i < len; i++) {
+        unsigned char number = 0;
+        int power = 1;
+        for (int j = 0; j < 8; j++) {
+            number += bin[i*8 + j]*power;
+            power *= 2;
+        }
+        result[8-i-1] = number;
+    }
+
+    return result;
+}
+
+vector<unsigned char> lenghtConcat(int lenMessage, int lenAssMessage)
+{
+    vector<unsigned char> lenByteMessage = decToHex8bytes(lenMessage);
+    vector<unsigned char> lenByteAssMessage = decToHex8bytes(lenAssMessage);
+
+    vector<unsigned char> result = lenByteMessage;
+
+    for (int i = 0; i < 8; i++) {
+        result.push_back(lenByteAssMessage[i]);
+    }
+
+    return result;
+}
+
 vector<unsigned char> immitationInsert(vector<unsigned char> A, vector<vector<unsigned char>> m, vector<vector<unsigned char>> calculatedKey)
 {
     vector<unsigned char> result;
@@ -141,16 +198,16 @@ vector<unsigned char> immitationInsert(vector<unsigned char> A, vector<vector<un
 
     for (int i = 0; i < len; i++) {
         for (int j = 0; j < 16; j++) {
-            temp.push_back( mult[j] ^ m[i][j] );
+            temp.push_back(mult[j] ^ m[i][j]);
         }
         GFMult128(mult, temp, calculatedKey[1]);
         temp.clear();
     }
 
-    vector<unsigned char> lmla; // Сука че это блять я не понимаю оно же должно получитсья длины 16 блять
+    vector<unsigned char> lmla = lenghtConcat(len, A.size());
 
     for (int i = 0; i < 16; i++) {
-        temp.push_back( lmla[i] ^ mult[i] );
+        temp.push_back(lmla[i] ^ mult[i]);
     }
 
     GFMult128(mult, temp, calculatedKey[1]);
