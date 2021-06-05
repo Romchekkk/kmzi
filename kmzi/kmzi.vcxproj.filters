@@ -14,9 +14,6 @@
     <ClCompile Include="kmzi.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="functions.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="aes128.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -26,14 +23,8 @@
     <ClCompile Include="aes128gcm_driver.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="best_functions.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="functions.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="Data.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
@@ -43,7 +34,7 @@
     <ClInclude Include="aes128gcm.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="best_functions.h">
+    <ClInclude Include="CS.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

@@ -158,15 +158,12 @@
     <ClCompile Include="aes128.cpp" />
     <ClCompile Include="aes128gcm.cpp" />
     <ClCompile Include="aes128gcm_driver.cpp" />
-    <ClCompile Include="best_functions.cpp" />
-    <ClCompile Include="functions.cpp" />
     <ClCompile Include="kmzi.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aes128.h" />
     <ClInclude Include="aes128gcm.h" />
-    <ClInclude Include="best_functions.h" />
-    <ClInclude Include="functions.h" />
+    <ClInclude Include="CS.h" />
     <ClInclude Include="Data.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
