@@ -120,7 +120,7 @@ int jopa() {
 	//aes128gcm(ciphertext,tag, key2, IV2, plaintext2, len_p, add_data2, len_ad);
 	//aes128gcm(ciphertext,tag, key3, IV3, plaintext3, len_p, add_data3, len_ad);
 
-	aes128gcm(ciphertext, tag, key, IV, plaintext, 3, add_data, 3);
+	aes128gcm(ciphertext, tag, key, IV, plaintext, add_data);
 	PrintVector(ciphertext);
 	std::cout << "\n";
 

@@ -15,5 +15,5 @@ For the authentication an additional data "add_data" can be added.
 The number of blocks for this additional data is "len_ad" (e.g., len_ad = 1 for a 16-byte additional data).
 */
 
-void aes128gcm(vector<unsigned char>& ciphertext, vector<unsigned char>& tag, const vector<unsigned char> k, const vector<unsigned char> IV, const vector<unsigned char> plaintext, const unsigned long len_p, const vector<unsigned char> add_data, const unsigned long len_ad);
+void aes128gcm(vector<unsigned char>& ciphertext, vector<unsigned char>& tag, const vector<unsigned char> k, const vector<unsigned char> IV, vector<unsigned char> plaintext, vector<unsigned char> add_data);
 void ByteConcatenation(vector<unsigned char>& concat, const vector<unsigned char> A, const vector<unsigned char> C, int len_ad, int len_p, int len_total);

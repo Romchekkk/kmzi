@@ -45,11 +45,11 @@ static vector<unsigned char> len_concat(Block, 0);
 
 /* Hold and shift the values of len(A) */
 static unsigned int len_ad_bits;
-static vector<unsigned char> len_a(Block / 2, 0);
+//static vector<unsigned char> len_a(Block / 2, 0);
 
 /* Hold and shift the values of len(C) */
 static unsigned int len_c_bits;
-static vector<unsigned char> len_c(Block / 2, 0);
+//static vector<unsigned char> len_c(Block / 2, 0);
 
 /* 32 bit variable to hold the increments modulus 32 bits */
 static unsigned long increment;
@@ -228,9 +228,59 @@ static void GFMult128(vector<unsigned char>& Z, const vector<unsigned char> X, c
 	}
 }
 
+/*
+inline vector<unsigned char> decToBin(unsigned long long dec)
+{
+	vector<unsigned char> result;
+	while (dec != 0) {
+		if (dec % 2 == 0) {
+			result.push_back(0);
+		}
+		else {
+			result.push_back(1);
+			dec -= 1;
+		}
+		dec /= 2;
+	}
+	return result;
+}
+
+vector<unsigned char> decToHex8bytes(unsigned long long dec)
+{
+	vector<unsigned char> result(8, 0x00);
+	vector<unsigned char> bin = decToBin(dec);
+	while (bin.size() % 8 != 0) {
+		bin.push_back(0);
+	}
+	int len = bin.size() / 8;
+	for (int i = 0; i < len; i++) {
+		unsigned char number = 0;
+		int power = 1;
+		for (int j = 0; j < 8; j++) {
+			number += bin[i * 8 + j] * power;
+			power *= 2;
+		}
+		result[8 - i - 1] = number;
+	}
+	return result;
+}
+*/
+
 /* Creation of the block concatenating A, C, len(A), len(C) */
 void ByteConcatenation(vector<unsigned char>& concat, const vector<unsigned char> A, const vector<unsigned char> C, int len_ad, int len_p, int len_total) {
 
+	/*unsigned long long lenMessageBite = C.size() * 8;
+	unsigned long long lenAssMessageBite = A.size() * 8;
+	vector<unsigned char> lenByteMessage = decToHex8bytes(lenMessageBite);
+	vector<unsigned char> lenByteAssMessage = decToHex8bytes(lenAssMessageBite);
+	vector<unsigned char> result = lenByteMessage;
+	for (int i = 0; i < 8; i++) {
+		result.push_back(lenByteAssMessage[i]);
+	}
+	//return result;
+	*/
+	vector<unsigned char> len_a(len_ad, 0);
+	vector<unsigned char> len_c(len_p, 0);
 	//memset(len_c, 0, 8);					// len_c is set to 0
 	std::fill(len_c.begin(), len_c.end(), 0);
 	//memset(len_a, 0, 8);					// len_a is set to 0
@@ -315,9 +365,17 @@ static void GHASH(vector<unsigned char>& OUT, const vector<unsigned char> H, con
 }
 
 /* Main GCM-AES 128 function */
-void aes128gcm(vector<unsigned char>& ciphertext, vector<unsigned char>& tag, const vector<unsigned char> k, const vector<unsigned char> IV, const vector<unsigned char> plaintext, const unsigned long len_p, const vector<unsigned char> add_data, const unsigned long len_ad)
+void aes128gcm(vector<unsigned char>& ciphertext, vector<unsigned char>& tag, const vector<unsigned char> k, const vector<unsigned char> IV, vector<unsigned char> plaintext, vector<unsigned char> add_data)
 {
+	while (plaintext.size() % 16 != 0) {
+		plaintext.push_back(0x00);
+	}
+	while (add_data.size() % 16 != 0) {
+		add_data.push_back(0x00);
+	}
 
+	const unsigned long len_p = plaintext.size() / 16;
+	const unsigned long len_ad = add_data.size() / 16;
 	unsigned int len_total = (len_p * Block) + (len_ad * Block) + Block;	// Total lenght of the concatenation in bytes.
 	vector<unsigned char> concat(len_total);										// Char array that holds the concatenation to be passed to GHASH
 
