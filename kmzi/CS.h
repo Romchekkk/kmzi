@@ -1,31 +1,30 @@
 #pragma once
 
 #include <vector>
-
-#define Block 16
+#include <string>
+#include <fstream>
+#include <iostream>
 
 using std::vector;
+using std::string;
+using std::ifstream;
+using std::ofstream;
 
 class CS
 {
 public:
-	CS(vector<vector<unsigned char>> key, vector<vector<unsigned char>> iv, vector<unsigned char> alpha, vector<unsigned char> i0, vector<vector<unsigned char>> OLS1, vector<vector<unsigned char>> OLS2, vector<unsigned char> lambda);
+	CS(vector<vector<unsigned char>> key, vector<vector<unsigned char>> iv, vector<unsigned char> alpha, vector<unsigned char> i0, vector<unsigned char> lambda, vector<vector<unsigned char>> OLS1, vector<vector<unsigned char>> OLS2);
+	CS(string key, string iv, string alpha, string i0, string lambda, string OLS1, string OLS2);
+	CS(const CS& copy);
 	~CS();
 
-	vector<vector<unsigned char>> cipher(vector<unsigned char> message, vector<unsigned char>associatedData);
+	string getMessageNumber();
+	vector<vector<unsigned char>> cipher(string messageFilename, string associatedDataFilename);
 
-private:
-	vector<vector<unsigned char>> _key;
-	vector<vector<unsigned char>> _iv;
-	vector<unsigned char> _alpha;
-	vector<unsigned char> _i0;
-	vector<vector<unsigned char>> _OLS1;
-	vector<vector<unsigned char>> _OLS2;
-	vector<unsigned char> _lambda;
-	int _messageNumber;
+
 
 	// Умножение в GF(128)
-	char BIT(unsigned char value);
+	size_t BIT(size_t value);
 	void ShiftRight(vector<unsigned char>& SHFT);
 	void xor_block(vector<unsigned char>& ZBLOCK, vector<unsigned char>& VBLOCK);
 	void GFMult128(vector<unsigned char>& Z, const vector<unsigned char> X, const vector<unsigned char> YBLOCK);
@@ -58,42 +57,89 @@ private:
 	vector<unsigned char> AssociatedVector(vector<unsigned char> associatedMessage, vector<unsigned char> bt);
 
 	// Шифрование открытого текста
-	vector<vector<unsigned char>> mrt(vector<unsigned char> plaintext, vector<vector<unsigned char>> calculatedKey, unsigned long len_p);
+	vector<vector<unsigned char>> mrt(vector<unsigned char> plaintext, vector<vector<unsigned char>> calculatedKey, size_t len_p);
 
 	// Перевод десятичного числа в двоичное
-	vector<unsigned char> decToBin(unsigned long long dec);
+	vector<unsigned char> decToBin(size_t dec);
 
 	// Перевод десятичного числа в шестнадцатиричное, длиной до 8 байт
-	vector<unsigned char> decToHex8bytes(unsigned long long dec);
+	vector<unsigned char> decToHex8bytes(size_t dec);
 
 	// Операция конкатенации длинн шифрованных данных и ассоциированных данных
-	vector<unsigned char> lenghtConcat(int lenMessage, int lenAssMessage);
+	vector<unsigned char> lenghtConcat(size_t lenMessage, size_t lenAssMessage);
 
 	// Вычисление имитовставки (метки)
 	vector<unsigned char> immitationInsert(vector<unsigned char> A, vector<vector<unsigned char>> m, vector<vector<unsigned char>> calculatedKey);
 
+	unsigned char hexToDec(string hex);
+	vector<unsigned char> readMessage(string filename);
+	vector<unsigned char> readOneDimensionalVector(string filename);
+	vector<vector<unsigned char>> readTwoDimensionalVector(string filename);
 	void nextMessage();
+
+private:
+	vector<vector<unsigned char>> _key;
+	vector<vector<unsigned char>> _iv;
+	vector<unsigned char> _alpha;
+	vector<unsigned char> _i0;
+	vector<vector<unsigned char>> _OLS1;
+	vector<vector<unsigned char>> _OLS2;
+	vector<unsigned char> _lambda;
+	size_t _messageNumber;
 };
 
-CS::CS(vector<vector<unsigned char>> key, vector<vector<unsigned char>> iv, vector<unsigned char> alpha, vector<unsigned char> i0, vector<vector<unsigned char>> OLS1, vector<vector<unsigned char>> OLS2, vector<unsigned char> lambda)
+inline CS::CS(vector<vector<unsigned char>> key, vector<vector<unsigned char>> iv, vector<unsigned char> alpha, vector<unsigned char> i0, vector<unsigned char> lambda, vector<vector<unsigned char>> OLS1, vector<vector<unsigned char>> OLS2)
 	: _key(key), _iv(iv), _alpha(alpha), _i0(i0), _OLS1(OLS1), _OLS2(OLS2), _lambda(lambda)
 {
 	_messageNumber = 1;
 }
 
-CS::~CS()
+inline CS::CS(string key, string iv, string alpha, string i0, string lambda, string OLS1, string OLS2)
+{
+	_key = this->readTwoDimensionalVector(key);
+	_iv = this->readTwoDimensionalVector(iv);
+	_alpha = this->readOneDimensionalVector(alpha);
+	_i0 = this->readOneDimensionalVector(i0);
+	_lambda = this->readOneDimensionalVector(lambda);
+	_OLS1 = this->readTwoDimensionalVector(OLS1);
+	_OLS2 = this->readTwoDimensionalVector(OLS2);
+	_messageNumber = 1;
+}
+
+inline CS::CS(const CS& copy)
+	: _key(copy._key), _iv(copy._iv), _alpha(copy._alpha), _i0(copy._i0), _OLS1(copy._OLS1), _OLS2(copy._OLS2), _lambda(copy._lambda)
+{
+	_messageNumber = copy._messageNumber;
+}
+
+inline CS::~CS()
 {}
 
-inline vector<vector<unsigned char>> CS::cipher(vector<unsigned char> message, vector<unsigned char> associatedData)
+inline string CS::getMessageNumber()
 {
-	int len = message.size();
+	char str[6] = "";
+	_itoa_s(_messageNumber, str, 10);
+	return string(str);
+}
+
+inline vector<vector<unsigned char>> CS::cipher(string messageFilename, string associatedDataFilename)
+{
+	vector<unsigned char> message = readMessage(messageFilename);
+	while (message.size() % 16 != 0) {
+		message.push_back(0x00);
+	}
+	vector<unsigned char> associatedData = readMessage(associatedDataFilename);
+	while (associatedData.size() % 16 != 0) {
+		associatedData.push_back(0x00);
+	}
+	size_t len = message.size();
 
 	vector<vector<unsigned char>> calculatedKey = this->g();
 	vector<unsigned char> A = this->AssociatedVector(associatedData, calculatedKey[1]);
 	vector<vector<unsigned char>> m = this->mrt(message, calculatedKey, len / 16);
 	vector<unsigned char> mark = this->immitationInsert(A, m, calculatedKey);
 	vector<vector<unsigned char>> result = { associatedData };
-	for (int i = 0; i < len / 16; i++) {
+	for (size_t i = 0; i < len / 16; i++) {
 		result.push_back(m[i]);
 	}
 	result.push_back(mark);
@@ -102,7 +148,7 @@ inline vector<vector<unsigned char>> CS::cipher(vector<unsigned char> message, v
 	return result;
 }
 
-inline char CS::BIT(unsigned char value)
+inline size_t CS::BIT(size_t value)
 {
 	switch (value)
 	{
@@ -139,7 +185,7 @@ inline void CS::ShiftRight(vector<unsigned char>& SHFT)
 	unsigned char prevcarry = 0x00;
 	unsigned char currcarry = 0x00;
 
-	for (int i = 0; i < Block; i++)
+	for (size_t i = 0; i < 16; i++)
 	{
 		prevcarry = currcarry;
 
@@ -155,7 +201,7 @@ inline void CS::ShiftRight(vector<unsigned char>& SHFT)
 
 inline void CS::xor_block(vector<unsigned char>& ZBLOCK, vector<unsigned char>& VBLOCK)
 {
-	for (int i = 0; i < Block; i++)
+	for (size_t i = 0; i < 16; i++)
 	{
 		ZBLOCK[i] = ZBLOCK[i] ^ VBLOCK[i];
 	}
@@ -165,11 +211,11 @@ inline void CS::GFMult128(vector<unsigned char>& Z, const vector<unsigned char> 
 {
 	std::fill(Z.begin(), Z.end(), 0);
 	vector<unsigned char> V = YBLOCK;
-	vector<unsigned char> R(Block, 0xe1);
+	vector<unsigned char> R(16, 0xe1);
 
-	for (int i = 0; i < Block; i++)
+	for (size_t i = 0; i < 16; i++)
 	{
-		for (int j = 0; j < Block / 2; j++)
+		for (size_t j = 0; j < 16 / 2; j++)
 		{
 			if (X[i] & BIT(7 - j))
 			{
@@ -192,7 +238,7 @@ inline void CS::GFMult128(vector<unsigned char>& Z, const vector<unsigned char> 
 inline vector<unsigned char> CS::QuasigroupOperation1(vector<unsigned char> left, vector<unsigned char> right)
 {
 	vector<unsigned char> result;
-	for (int i = 0; i < 16; i++) {
+	for (size_t i = 0; i < 16; i++) {
 		result.push_back(_OLS1[left[i]][right[i]]);
 	}
 	return result;
@@ -201,7 +247,7 @@ inline vector<unsigned char> CS::QuasigroupOperation1(vector<unsigned char> left
 inline vector<unsigned char> CS::QuasigroupOperation2(vector<unsigned char> left, vector<unsigned char> right)
 {
 	vector<unsigned char> result;
-	for (int i = 0; i < 16; i++) {
+	for (size_t i = 0; i < 16; i++) {
 		result.push_back(_OLS2[left[i]][right[i]]);
 	}
 	return result;
@@ -210,7 +256,7 @@ inline vector<unsigned char> CS::QuasigroupOperation2(vector<unsigned char> left
 inline vector<unsigned char> CS::Lambda(vector<unsigned char> x)
 {
 	vector<unsigned char> result;
-	for (int i = 0; i < 16; i++) {
+	for (size_t i = 0; i < 16; i++) {
 		result.push_back(_lambda[x[i]]);
 	}
 	return result;
@@ -224,7 +270,7 @@ inline vector<unsigned char> CS::f(vector<unsigned char> w)
 inline vector<unsigned char> CS::phi(vector<unsigned char> x)
 {
 	vector<unsigned char> result;
-	for (int i = 0; i < 16; i++) {
+	for (size_t i = 0; i < 16; i++) {
 		result.push_back(x[i] ^ _alpha[i]);
 	}
 	return result;
@@ -235,7 +281,7 @@ inline vector<vector<unsigned char>> CS::g()
 	vector<vector<unsigned char>> result = { {}, {} };
 	vector<unsigned char> temp1 = this->QuasigroupOperation1(this->Lambda(this->QuasigroupOperation1(_key[0], _iv[0])), _key[2]);
 	vector<unsigned char> temp2 = this->QuasigroupOperation1(this->Lambda(this->QuasigroupOperation1(_key[1], _iv[1])), _key[2]);
-	for (int i = 0; i < 16; i++) {
+	for (size_t i = 0; i < 16; i++) {
 		result[0].push_back(_OLS1[temp1[i]][temp2[i]]);
 		result[1].push_back(_OLS2[temp1[i]][temp2[i]]);
 	}
@@ -246,8 +292,8 @@ inline vector<unsigned char> CS::summ(vector<unsigned char> left, vector<unsigne
 {
 	vector<unsigned char> result = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	unsigned char perenos = 0x00;
-	for (int i = 15; i >= 0; i--) {
-		int sum = left[i] + right[i] + perenos;
+	for (size_t i = 15; i > 0; i--) {
+		size_t sum = left[i] + right[i] + perenos;
 		if (sum > 255) {
 			result[i] = ((unsigned char)sum);
 			perenos = 0x01;
@@ -265,12 +311,12 @@ inline vector<unsigned char> CS::gamma(vector<unsigned char> blockNumber, vector
 	vector<unsigned char> wi = this->summ(blockNumber, _i0);
 	vector<unsigned char> ci = this->f(wi);
 	vector<unsigned char> di = this->phi(ci);
-	vector<unsigned char> left(Block, 0);
+	vector<unsigned char> left(16, 0);
 	GFMult128(left, ci, calculatedKey[0]);
-	vector<unsigned char> right(Block, 0);
+	vector<unsigned char> right(16, 0);
 	GFMult128(right, di, calculatedKey[1]);
 	vector<unsigned char> result;
-	for (int i = 0; i < 16; i++) {
+	for (size_t i = 0; i < 16; i++) {
 		result.push_back(left[i] ^ right[i]);
 	}
 	return result;
@@ -279,15 +325,15 @@ inline vector<unsigned char> CS::gamma(vector<unsigned char> blockNumber, vector
 inline vector<unsigned char> CS::AssociatedVector(vector<unsigned char> associatedMessage, vector<unsigned char> bt)
 {
 	vector<unsigned char> result(16, 0x00);
-	int associatedMessageLength = associatedMessage.size() / 16;
+	size_t associatedMessageLength = associatedMessage.size() / 16;
 	vector<unsigned char> temp;
-	for (int i = 0; i < 16; i++) {
+	for (size_t i = 0; i < 16; i++) {
 		temp.push_back(associatedMessage[i]);
 	}
 	GFMult128(result, temp, bt);
-	for (int i = 1; i < associatedMessageLength; i++) {
+	for (size_t i = 1; i < associatedMessageLength; i++) {
 		temp.clear();
-		for (int j = 0; j < 16; j++) {
+		for (size_t j = 0; j < 16; j++) {
 			temp.push_back(associatedMessage[i * 16 + j] ^ result[j]);
 		}
 		GFMult128(result, temp, bt);
@@ -295,17 +341,17 @@ inline vector<unsigned char> CS::AssociatedVector(vector<unsigned char> associat
 	return result;
 }
 
-inline vector<vector<unsigned char>> CS::mrt(vector<unsigned char> plaintext, vector<vector<unsigned char>> calculatedKey, unsigned long len_p)
+inline vector<vector<unsigned char>> CS::mrt(vector<unsigned char> plaintext, vector<vector<unsigned char>> calculatedKey, size_t len_p)
 {
 	vector<vector<unsigned char>> result(len_p);
 	vector<unsigned char> tempCB;
 	vector<unsigned char> odin = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 };
 	vector<unsigned char> blockNumber = odin;
 
-	for (int i = 0; i < len_p; i++)
+	for (size_t i = 0; i < len_p; i++)
 	{
 		tempCB = this->gamma(blockNumber, calculatedKey);
-		for (int j = 0; j < Block; j++)
+		for (size_t j = 0; j < 16; j++)
 		{
 			result[i].push_back(plaintext[(i * 16) + j] ^ tempCB[j]);
 		}
@@ -314,7 +360,7 @@ inline vector<vector<unsigned char>> CS::mrt(vector<unsigned char> plaintext, ve
 	return result;
 }
 
-inline vector<unsigned char> CS::decToBin(unsigned long long dec)
+inline vector<unsigned char> CS::decToBin(size_t dec)
 {
 	vector<unsigned char> result;
 	while (dec != 0) {
@@ -330,19 +376,19 @@ inline vector<unsigned char> CS::decToBin(unsigned long long dec)
 	return result;
 }
 
-inline vector<unsigned char> CS::decToHex8bytes(unsigned long long dec)
+inline vector<unsigned char> CS::decToHex8bytes(size_t dec)
 {
 	vector<unsigned char> result(8, 0x00);
 	vector<unsigned char> bin = this->decToBin(dec);
 	while (bin.size() % 8 != 0) {
 		bin.push_back(0);
 	}
-	int len = bin.size() / 8;
-	for (int i = 0; i < len; i++) {
+	size_t len = bin.size() / 8;
+	for (size_t i = 0; i < len; i++) {
 		unsigned char number = 0;
-		int power = 1;
-		for (int j = 0; j < 8; j++) {
-			number += bin[i * 8 + j] * power;
+		size_t power = 1;
+		for (size_t j = 0; j < 8; j++) {
+			number += static_cast<unsigned char>(bin[i * 8 + j] * power);
 			power *= 2;
 		}
 		result[8 - i - 1] = number;
@@ -350,14 +396,14 @@ inline vector<unsigned char> CS::decToHex8bytes(unsigned long long dec)
 	return result;
 }
 
-inline vector<unsigned char> CS::lenghtConcat(int lenMessage, int lenAssMessage)
+inline vector<unsigned char> CS::lenghtConcat(size_t lenMessage, size_t lenAssMessage)
 {
 	unsigned long long lenMessageBite = lenMessage * 8;
 	unsigned long long lenAssMessageBite = lenAssMessage * 8;
 	vector<unsigned char> lenByteMessage = this->decToHex8bytes(lenMessageBite);
 	vector<unsigned char> lenByteAssMessage = this->decToHex8bytes(lenAssMessageBite);
 	vector<unsigned char> result = lenByteMessage;
-	for (int i = 0; i < 8; i++) {
+	for (size_t i = 0; i < 8; i++) {
 		result.push_back(lenByteAssMessage[i]);
 	}
 	return result;
@@ -368,22 +414,105 @@ inline vector<unsigned char> CS::immitationInsert(vector<unsigned char> A, vecto
 	vector<unsigned char> result;
 	vector<unsigned char> temp;
 	vector<unsigned char> mult = A;
-	int len = m.size();
-	for (int i = 0; i < len; i++) {
-		for (int j = 0; j < 16; j++) {
+	size_t len = m.size();
+	for (size_t i = 0; i < len; i++) {
+		for (size_t j = 0; j < 16; j++) {
 			temp.push_back(mult[j] ^ m[i][j]);
 		}
 		GFMult128(mult, temp, calculatedKey[1]);
 		temp.clear();
 	}
 	vector<unsigned char> lmla = this->lenghtConcat(len, A.size());
-	for (int i = 0; i < 16; i++) {
+	for (size_t i = 0; i < 16; i++) {
 		temp.push_back(lmla[i] ^ mult[i]);
 	}
 	GFMult128(mult, temp, calculatedKey[1]);
-	for (int i = 0; i < 16; i++) {
+	for (size_t i = 0; i < 16; i++) {
 		result.push_back(mult[i] ^ calculatedKey[0][i]);
 	}
+	return result;
+}
+
+inline unsigned char CS::hexToDec(string hex)
+{
+	unsigned char leftByte = 0;
+	unsigned char rightByte = 0;
+	if (hex[0] >= '0' && hex[0] <= '9') {
+		leftByte = hex[0] - '0';
+	}
+	else {
+		leftByte = hex[0] - 87;
+	}
+	if (hex[1] >= '0' && hex[1] <= '9') {
+		rightByte = hex[1] - '0';
+	}
+	else {
+		rightByte = hex[1] - 87;
+	}
+	return leftByte * 16 + rightByte;
+}
+
+inline vector<unsigned char> CS::readMessage(string filename)
+{
+	vector<unsigned char> result;
+	ifstream inputFile;
+	inputFile.open(filename);
+	if (!inputFile) {
+		exit(1);
+	}
+	unsigned char s;
+	char n = '\0';
+	do {
+		s = inputFile.get();
+		result.push_back(s);
+		n = inputFile.peek();
+	} while (n != EOF);
+	return result;
+}
+
+inline vector<unsigned char> CS::readOneDimensionalVector(string filename)
+{
+	vector<unsigned char> result;
+	ifstream inputFile;
+	inputFile.open(filename);
+	if (!inputFile) {
+		exit(1);
+	}
+	string s = "";
+	char next = '\n';
+	do {
+		inputFile >> s;
+		next = inputFile.peek();
+		result.push_back(this->hexToDec(s));
+
+	} while (next != EOF);
+	return result;
+}
+
+inline vector<vector<unsigned char>> CS::readTwoDimensionalVector(string filename)
+{
+	vector<vector<unsigned char>> result;
+	ifstream inputFile;
+	inputFile.open(filename);
+	if (!inputFile) {
+		exit(1);
+	}
+	string s = "";
+	char next = '\n';
+	size_t i = -1;
+	do {
+
+		if (next == '\n') {
+			result.push_back(vector<unsigned char>());
+			i++;
+		}
+		inputFile >> s;
+		next = inputFile.peek();
+		result[i].push_back(this->hexToDec(s));
+		if (result[i].size() == 255) {
+			std::cout << "qwe" << std::endl;
+		}
+	} while (next != EOF);
 	return result;
 }
 

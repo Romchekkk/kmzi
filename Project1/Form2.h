@@ -244,22 +244,22 @@ namespace Project1 {
 		vector<vector<unsigned char>> result = _cipher->cipher(marshal_as<string>(textBoxMessage->Text), marshal_as<string>(textBoxAssociatedData->Text));
 		ofstream outputFile;
 		outputFile.open(marshal_as<string>(textBoxOutputFile->Text), std::ios::app);
+		ofstream outputMessageFile;
+		outputMessageFile.open("test.bin", std::ios_base::out | std::ios_base::binary);
 		if (!outputFile) {
 			exit(1);
 		}
-		outputFile << "Ассоциированные данные\n{\n";
+		outputFile << "Ассоциированные данные\n";
 		size_t i = 0;
 		while (result[0][i]) {
 			outputFile.put(result[0][i]);
 			i++;
 		}
-		outputFile << "\n}\nЗашифрованное сообщение\n{\n";
 		for (size_t j = 1; j < result.size(); j++) {
 			for (size_t k = 0; k < result[j].size(); k++) {
-				outputFile.put(result[j][k]);
+				outputMessageFile.put(result[j][k]);
 			}
 		}
-		outputFile << "\n}\n\n";
 		textBoxMessageNumber->Text = marshal_as<String^>(_cipher->getMessageNumber());
 	}
 	private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e) {
