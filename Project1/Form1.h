@@ -1,5 +1,9 @@
 #pragma once
 
+#include <msclr/marshal_cppstd.h>
+#include "CS.h"
+#include "Form2.h"
+
 namespace Project1 {
 
 	using namespace System;
@@ -8,6 +12,7 @@ namespace Project1 {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace msclr::interop;
 
 	public ref class Form1 : public System::Windows::Forms::Form
 	{
@@ -62,6 +67,10 @@ namespace Project1 {
 
 
 	private: System::Windows::Forms::Button^ button9;
+	private: System::Windows::Forms::Label^ label9;
+	private: System::Windows::Forms::Button^ button8;
+	private: System::Windows::Forms::TextBox^ textBoxFolder;
+
 
 	private:
 		System::ComponentModel::Container^ components;
@@ -92,11 +101,14 @@ namespace Project1 {
 			this->button7 = (gcnew System::Windows::Forms::Button());
 			this->textBoxOLS2 = (gcnew System::Windows::Forms::TextBox());
 			this->button9 = (gcnew System::Windows::Forms::Button());
+			this->label9 = (gcnew System::Windows::Forms::Label());
+			this->button8 = (gcnew System::Windows::Forms::Button());
+			this->textBoxFolder = (gcnew System::Windows::Forms::TextBox());
 			this->SuspendLayout();
 			// 
 			// textBoxKey
 			// 
-			this->textBoxKey->Location = System::Drawing::Point(36, 71);
+			this->textBoxKey->Location = System::Drawing::Point(35, 98);
 			this->textBoxKey->Name = L"textBoxKey";
 			this->textBoxKey->ReadOnly = true;
 			this->textBoxKey->Size = System::Drawing::Size(322, 20);
@@ -104,7 +116,7 @@ namespace Project1 {
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(425, 69);
+			this->button1->Location = System::Drawing::Point(424, 96);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(75, 23);
 			this->button1->TabIndex = 1;
@@ -117,7 +129,7 @@ namespace Project1 {
 			this->label1->AutoSize = true;
 			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20, static_cast<System::Drawing::FontStyle>(((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)
 				| System::Drawing::FontStyle::Underline)), System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(204)));
-			this->label1->Location = System::Drawing::Point(153, 9);
+			this->label1->Location = System::Drawing::Point(132, 9);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(276, 31);
 			this->label1->TabIndex = 4;
@@ -128,7 +140,7 @@ namespace Project1 {
 			this->label2->AutoSize = true;
 			this->label2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
-			this->label2->Location = System::Drawing::Point(33, 51);
+			this->label2->Location = System::Drawing::Point(32, 78);
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(47, 17);
 			this->label2->TabIndex = 5;
@@ -139,7 +151,7 @@ namespace Project1 {
 			this->label3->AutoSize = true;
 			this->label3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
-			this->label3->Location = System::Drawing::Point(33, 92);
+			this->label3->Location = System::Drawing::Point(32, 119);
 			this->label3->Name = L"label3";
 			this->label3->Size = System::Drawing::Size(190, 17);
 			this->label3->TabIndex = 8;
@@ -147,7 +159,7 @@ namespace Project1 {
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(425, 110);
+			this->button2->Location = System::Drawing::Point(424, 137);
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(75, 23);
 			this->button2->TabIndex = 7;
@@ -157,7 +169,7 @@ namespace Project1 {
 			// 
 			// textBoxIV
 			// 
-			this->textBoxIV->Location = System::Drawing::Point(36, 112);
+			this->textBoxIV->Location = System::Drawing::Point(35, 139);
 			this->textBoxIV->Name = L"textBoxIV";
 			this->textBoxIV->ReadOnly = true;
 			this->textBoxIV->Size = System::Drawing::Size(322, 20);
@@ -168,7 +180,7 @@ namespace Project1 {
 			this->label4->AutoSize = true;
 			this->label4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
-			this->label4->Location = System::Drawing::Point(33, 134);
+			this->label4->Location = System::Drawing::Point(32, 161);
 			this->label4->Name = L"label4";
 			this->label4->Size = System::Drawing::Size(55, 17);
 			this->label4->TabIndex = 11;
@@ -176,7 +188,7 @@ namespace Project1 {
 			// 
 			// button3
 			// 
-			this->button3->Location = System::Drawing::Point(425, 152);
+			this->button3->Location = System::Drawing::Point(424, 179);
 			this->button3->Name = L"button3";
 			this->button3->Size = System::Drawing::Size(75, 23);
 			this->button3->TabIndex = 10;
@@ -186,7 +198,7 @@ namespace Project1 {
 			// 
 			// textBoxAlpha
 			// 
-			this->textBoxAlpha->Location = System::Drawing::Point(36, 154);
+			this->textBoxAlpha->Location = System::Drawing::Point(35, 181);
 			this->textBoxAlpha->Name = L"textBoxAlpha";
 			this->textBoxAlpha->ReadOnly = true;
 			this->textBoxAlpha->Size = System::Drawing::Size(322, 20);
@@ -197,7 +209,7 @@ namespace Project1 {
 			this->label5->AutoSize = true;
 			this->label5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
-			this->label5->Location = System::Drawing::Point(33, 175);
+			this->label5->Location = System::Drawing::Point(32, 202);
 			this->label5->Name = L"label5";
 			this->label5->Size = System::Drawing::Size(23, 17);
 			this->label5->TabIndex = 14;
@@ -205,7 +217,7 @@ namespace Project1 {
 			// 
 			// button4
 			// 
-			this->button4->Location = System::Drawing::Point(425, 193);
+			this->button4->Location = System::Drawing::Point(424, 220);
 			this->button4->Name = L"button4";
 			this->button4->Size = System::Drawing::Size(75, 23);
 			this->button4->TabIndex = 13;
@@ -215,7 +227,7 @@ namespace Project1 {
 			// 
 			// textBoxI0
 			// 
-			this->textBoxI0->Location = System::Drawing::Point(36, 195);
+			this->textBoxI0->Location = System::Drawing::Point(35, 222);
 			this->textBoxI0->Name = L"textBoxI0";
 			this->textBoxI0->ReadOnly = true;
 			this->textBoxI0->Size = System::Drawing::Size(322, 20);
@@ -226,7 +238,7 @@ namespace Project1 {
 			this->label6->AutoSize = true;
 			this->label6->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
-			this->label6->Location = System::Drawing::Point(33, 218);
+			this->label6->Location = System::Drawing::Point(32, 245);
 			this->label6->Name = L"label6";
 			this->label6->Size = System::Drawing::Size(183, 17);
 			this->label6->TabIndex = 17;
@@ -234,7 +246,7 @@ namespace Project1 {
 			// 
 			// button5
 			// 
-			this->button5->Location = System::Drawing::Point(425, 236);
+			this->button5->Location = System::Drawing::Point(424, 263);
 			this->button5->Name = L"button5";
 			this->button5->Size = System::Drawing::Size(75, 23);
 			this->button5->TabIndex = 16;
@@ -244,7 +256,7 @@ namespace Project1 {
 			// 
 			// textBoxLambda
 			// 
-			this->textBoxLambda->Location = System::Drawing::Point(36, 238);
+			this->textBoxLambda->Location = System::Drawing::Point(35, 265);
 			this->textBoxLambda->Name = L"textBoxLambda";
 			this->textBoxLambda->ReadOnly = true;
 			this->textBoxLambda->Size = System::Drawing::Size(322, 20);
@@ -255,7 +267,7 @@ namespace Project1 {
 			this->label7->AutoSize = true;
 			this->label7->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
-			this->label7->Location = System::Drawing::Point(33, 259);
+			this->label7->Location = System::Drawing::Point(32, 286);
 			this->label7->Name = L"label7";
 			this->label7->Size = System::Drawing::Size(50, 17);
 			this->label7->TabIndex = 20;
@@ -263,7 +275,7 @@ namespace Project1 {
 			// 
 			// button6
 			// 
-			this->button6->Location = System::Drawing::Point(425, 277);
+			this->button6->Location = System::Drawing::Point(424, 304);
 			this->button6->Name = L"button6";
 			this->button6->Size = System::Drawing::Size(75, 23);
 			this->button6->TabIndex = 19;
@@ -273,7 +285,7 @@ namespace Project1 {
 			// 
 			// textBoxOLS1
 			// 
-			this->textBoxOLS1->Location = System::Drawing::Point(36, 279);
+			this->textBoxOLS1->Location = System::Drawing::Point(35, 306);
 			this->textBoxOLS1->Name = L"textBoxOLS1";
 			this->textBoxOLS1->ReadOnly = true;
 			this->textBoxOLS1->Size = System::Drawing::Size(322, 20);
@@ -284,7 +296,7 @@ namespace Project1 {
 			this->label8->AutoSize = true;
 			this->label8->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
-			this->label8->Location = System::Drawing::Point(33, 299);
+			this->label8->Location = System::Drawing::Point(32, 326);
 			this->label8->Name = L"label8";
 			this->label8->Size = System::Drawing::Size(50, 17);
 			this->label8->TabIndex = 23;
@@ -292,7 +304,7 @@ namespace Project1 {
 			// 
 			// button7
 			// 
-			this->button7->Location = System::Drawing::Point(425, 317);
+			this->button7->Location = System::Drawing::Point(424, 344);
 			this->button7->Name = L"button7";
 			this->button7->Size = System::Drawing::Size(75, 23);
 			this->button7->TabIndex = 22;
@@ -302,7 +314,7 @@ namespace Project1 {
 			// 
 			// textBoxOLS2
 			// 
-			this->textBoxOLS2->Location = System::Drawing::Point(36, 319);
+			this->textBoxOLS2->Location = System::Drawing::Point(35, 346);
 			this->textBoxOLS2->Name = L"textBoxOLS2";
 			this->textBoxOLS2->ReadOnly = true;
 			this->textBoxOLS2->Size = System::Drawing::Size(322, 20);
@@ -310,7 +322,7 @@ namespace Project1 {
 			// 
 			// button9
 			// 
-			this->button9->Location = System::Drawing::Point(258, 386);
+			this->button9->Location = System::Drawing::Point(240, 383);
 			this->button9->Name = L"button9";
 			this->button9->Size = System::Drawing::Size(75, 23);
 			this->button9->TabIndex = 27;
@@ -318,11 +330,43 @@ namespace Project1 {
 			this->button9->UseVisualStyleBackColor = true;
 			this->button9->Click += gcnew System::EventHandler(this, &Form1::button9_Click);
 			// 
+			// label9
+			// 
+			this->label9->AutoSize = true;
+			this->label9->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->label9->Location = System::Drawing::Point(32, 35);
+			this->label9->Name = L"label9";
+			this->label9->Size = System::Drawing::Size(107, 17);
+			this->label9->TabIndex = 30;
+			this->label9->Text = L"Найти в папке:";
+			// 
+			// button8
+			// 
+			this->button8->Location = System::Drawing::Point(424, 53);
+			this->button8->Name = L"button8";
+			this->button8->Size = System::Drawing::Size(75, 23);
+			this->button8->TabIndex = 29;
+			this->button8->Text = L"Обзор";
+			this->button8->UseVisualStyleBackColor = true;
+			this->button8->Click += gcnew System::EventHandler(this, &Form1::button8_Click);
+			// 
+			// textBoxFolder
+			// 
+			this->textBoxFolder->Location = System::Drawing::Point(35, 55);
+			this->textBoxFolder->Name = L"textBoxFolder";
+			this->textBoxFolder->ReadOnly = true;
+			this->textBoxFolder->Size = System::Drawing::Size(322, 20);
+			this->textBoxFolder->TabIndex = 28;
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(584, 428);
+			this->ClientSize = System::Drawing::Size(534, 428);
+			this->Controls->Add(this->label9);
+			this->Controls->Add(this->button8);
+			this->Controls->Add(this->textBoxFolder);
 			this->Controls->Add(this->button9);
 			this->Controls->Add(this->label8);
 			this->Controls->Add(this->button7);
@@ -409,9 +453,21 @@ namespace Project1 {
 			textBoxOLS2->Text = fileName;
 		}
 	}
-	private: System::Void button9_Click(System::Object^ sender, System::EventArgs^ e) {
-		this->Hide();
-		this->Close();
+	private: System::Void button8_Click(System::Object^ sender, System::EventArgs^ e) {
+		FolderBrowserDialog^ openDlg = gcnew FolderBrowserDialog();
+		if (System::Windows::Forms::DialogResult::OK == openDlg->ShowDialog())
+		{
+			String^ fileName = openDlg->SelectedPath;
+			textBoxFolder->Text = fileName;
+			textBoxKey->Text = fileName + "\\key.txt";
+			textBoxIV->Text = fileName + "\\iv.txt";
+			textBoxI0->Text = fileName + "\\i0.txt";
+			textBoxAlpha->Text = fileName + "\\alpha.txt";
+			textBoxLambda->Text = fileName + "\\lambda.txt";
+			textBoxOLS1->Text = fileName + "\\OLS1.txt";
+			textBoxOLS2->Text = fileName + "\\OLS2.txt";
+		}
 	}
+	private: System::Void button9_Click(System::Object^ sender, System::EventArgs^ e);
 };
 }
