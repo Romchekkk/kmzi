@@ -265,6 +265,54 @@ vector<unsigned char> decToHex8bytes(unsigned long long dec)
 	return result;
 }
 */
+inline vector<unsigned char> decToBin(size_t dec)
+{
+	vector<unsigned char> result;
+	while (dec != 0) {
+		if (dec % 2 == 0) {
+			result.push_back(0);
+		}
+		else {
+			result.push_back(1);
+			dec -= 1;
+		}
+		dec /= 2;
+	}
+	return result;
+}
+
+inline vector<unsigned char> decToHex8bytes(size_t dec)
+{
+	vector<unsigned char> result(8, 0x00);
+	vector<unsigned char> bin = decToBin(dec);
+	while (bin.size() % 8 != 0) {
+		bin.push_back(0);
+	}
+	size_t len = bin.size() / 8;
+	for (size_t i = 0; i < len; i++) {
+		unsigned char number = 0;
+		size_t power = 1;
+		for (size_t j = 0; j < 8; j++) {
+			number += static_cast<unsigned char>(bin[i * 8 + j] * power);
+			power *= 2;
+		}
+		result[8 - i - 1] = number;
+	}
+	return result;
+}
+
+inline vector<unsigned char> lenghtConcat(size_t lenMessage, size_t lenAssMessage)
+{
+	unsigned long long lenMessageBite = lenMessage * 8;
+	unsigned long long lenAssMessageBite = lenAssMessage * 8;
+	vector<unsigned char> lenByteMessage = decToHex8bytes(lenMessageBite);
+	vector<unsigned char> lenByteAssMessage = decToHex8bytes(lenAssMessageBite);
+	vector<unsigned char> result = lenByteMessage;
+	for (size_t i = 0; i < 8; i++) {
+		result.push_back(lenByteAssMessage[i]);
+	}
+	return result;
+}
 
 /* Creation of the block concatenating A, C, len(A), len(C) */
 void ByteConcatenation(vector<unsigned char>& concat, const vector<unsigned char> A, const vector<unsigned char> C, int len_ad, int len_p, int len_total) {
@@ -279,8 +327,8 @@ void ByteConcatenation(vector<unsigned char>& concat, const vector<unsigned char
 	}
 	//return result;
 	*/
-	vector<unsigned char> len_a(len_ad, 0);
-	vector<unsigned char> len_c(len_p, 0);
+	vector<unsigned char> len_a(Block / 2, 0);
+	vector<unsigned char> len_c(Block / 2, 0);
 	//memset(len_c, 0, 8);					// len_c is set to 0
 	std::fill(len_c.begin(), len_c.end(), 0);
 	//memset(len_a, 0, 8);					// len_a is set to 0
@@ -290,7 +338,7 @@ void ByteConcatenation(vector<unsigned char>& concat, const vector<unsigned char
 
 	len_c_bits = len_p * 8 * Block;			// Bit len of C in Dec	(stored in an int)
 	len_ad_bits = len_ad * 8 * Block;		// Bit len of AD in Dec (stored in an int)
-
+/*
 	for (int i = 0; i < len_ad; i++)
 	{
 		len_a[i] = (len_ad_bits >> 8 * i) & 0xFF;	// Len in hex is shifted to the right and ANDed with 0xFF to get the value
@@ -312,8 +360,10 @@ void ByteConcatenation(vector<unsigned char>& concat, const vector<unsigned char
 			len_concat[i] = len_a[7 - i % 8];		// Then the AAD length is added
 		}
 	}
-
-	//PrintVector(len_concat, 16);
+*/
+	len_concat = lenghtConcat(C.size(), A.size());
+	printf("%s\n", "JOPa: ");
+	PrintVector(len_concat, 16);
 
 	for (int i = 0; i < len_total; i++)				// Once the concatenation of the lenght is shifted and stored, we can compute the final concatenation
 	{
@@ -331,7 +381,7 @@ void ByteConcatenation(vector<unsigned char>& concat, const vector<unsigned char
 		}
 	}
 
-	//printf("%s\n", "Concatenation: ");
+	printf("%s\n", "Concatenation: ");
 	//PrintVector(concat, len_total);
 }
 
@@ -378,7 +428,7 @@ void aes128gcm(vector<unsigned char>& ciphertext, vector<unsigned char>& tag, co
 	const unsigned long len_ad = add_data.size() / 16;
 	unsigned int len_total = (len_p * Block) + (len_ad * Block) + Block;	// Total lenght of the concatenation in bytes.
 	vector<unsigned char> concat(len_total);										// Char array that holds the concatenation to be passed to GHASH
-
+	//vector<unsigned char> concat;
 	/*
 	// Key
 	printf("%s\n", "Key:");
@@ -404,7 +454,7 @@ void aes128gcm(vector<unsigned char>& ciphertext, vector<unsigned char>& tag, co
 	GCTR(ciphertext, J0, plaintext, k, len_p);	// GCTR is called to compute all the ciphertext using the plaintext, k and J0
 
 	ByteConcatenation(concat, add_data, ciphertext, len_ad, len_p, len_total);	// A, C, len(A) and len(C) are concatenated
-
+	//concat = lenghtConcat(ciphertext.size(), add_data.size());
 	GHASH(OUTPUT, H, concat, len_total);		// GHASH is called using the previous computed concat, H
 
 	J0Definition(J0, IV);			// J0 is redefined because the previous version had increments.
