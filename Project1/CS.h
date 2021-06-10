@@ -4,11 +4,20 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <winuser.h>
+#include <msclr/marshal_cppstd.h>
 
 using std::vector;
 using std::string;
 using std::ifstream;
 using std::ofstream;
+using namespace System;
+using namespace System::ComponentModel;
+using namespace System::Collections;
+using namespace System::Windows::Forms;
+using namespace System::Data;
+using namespace System::Drawing;
+using namespace msclr::interop;
 
 class CS
 {
@@ -456,7 +465,9 @@ inline vector<unsigned char> CS::readMessage(string filename)
 	ifstream inputFile;
 	inputFile.open(filename);
 	if (!inputFile) {
-		exit(1);
+		string str = "Файл " + filename + " не существует";
+		MessageBox::Show(marshal_as<String^>(str), "Ошибка", MessageBoxButtons::OK, MessageBoxIcon::Warning);
+		return result;
 	}
 	unsigned char s;
 	char n = '\0';
@@ -474,7 +485,9 @@ inline vector<unsigned char> CS::readOneDimensionalVector(string filename)
 	ifstream inputFile;
 	inputFile.open(filename);
 	if (!inputFile) {
-		exit(1);
+		string str = "Файл " + filename + " не существует";
+		MessageBox::Show(marshal_as<String^>(str), "Ошибка", MessageBoxButtons::OK, MessageBoxIcon::Warning);
+		throw std::invalid_argument("received negative value");
 	}
 	string s = "";
 	char next = '\n';
@@ -493,7 +506,10 @@ inline vector<vector<unsigned char>> CS::readTwoDimensionalVector(string filenam
 	ifstream inputFile;
 	inputFile.open(filename);
 	if (!inputFile) {
+		string str = "Файл " + filename + " не существует";
+		MessageBox::Show(marshal_as<String^>(str), "Ошибка", MessageBoxButtons::OK, MessageBoxIcon::Warning);
 		exit(1);
+		
 	}
 	string s = "";
 	char next = '\n';

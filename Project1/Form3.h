@@ -14,13 +14,13 @@ namespace Project1 {
 	using namespace msclr::interop;
 
 	/// <summary>
-	/// Сводка для Form2
+	/// Сводка для Form3
 	/// </summary>
-	public ref class Form2 : public System::Windows::Forms::Form
+	public ref class Form3 : public System::Windows::Forms::Form
 	{
 	private: CS* _cipher;
 	public:
-		Form2(CS cipher)
+		Form3(CS cipher)
 		{
 			InitializeComponent();
 			_cipher = new CS(cipher);
@@ -30,7 +30,7 @@ namespace Project1 {
 		/// <summary>
 		/// Освободить все используемые ресурсы.
 		/// </summary>
-		~Form2()
+		~Form3()
 		{
 			if (components)
 			{
@@ -63,7 +63,7 @@ namespace Project1 {
 		/// <summary>
 		/// Обязательная переменная конструктора.
 		/// </summary>
-		System::ComponentModel::Container ^components;
+		System::ComponentModel::Container^ components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -94,9 +94,9 @@ namespace Project1 {
 				static_cast<System::Byte>(204)));
 			this->label2->Location = System::Drawing::Point(26, 106);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(88, 17);
+			this->label2->Size = System::Drawing::Size(192, 17);
 			this->label2->TabIndex = 8;
-			this->label2->Text = L"Сообщение:";
+			this->label2->Text = L"Зашифрование сообщение:";
 			// 
 			// button1
 			// 
@@ -106,7 +106,7 @@ namespace Project1 {
 			this->button1->TabIndex = 7;
 			this->button1->Text = L"Обзор";
 			this->button1->UseVisualStyleBackColor = true;
-			this->button1->Click += gcnew System::EventHandler(this, &Form2::button1_Click);
+			this->button1->Click += gcnew System::EventHandler(this, &Form3::button1_Click);
 			// 
 			// textBoxMessage
 			// 
@@ -123,9 +123,10 @@ namespace Project1 {
 				| System::Drawing::FontStyle::Underline)), System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(204)));
 			this->label1->Location = System::Drawing::Point(145, 9);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(235, 31);
+			this->label1->Size = System::Drawing::Size(282, 31);
 			this->label1->TabIndex = 9;
-			this->label1->Text = L"CS шифрование";
+			this->label1->Text = L"CS расшифрование";
+			this->label1->Click += gcnew System::EventHandler(this, &Form3::label1_Click);
 			// 
 			// label3
 			// 
@@ -146,7 +147,7 @@ namespace Project1 {
 			this->button2->TabIndex = 11;
 			this->button2->Text = L"Обзор";
 			this->button2->UseVisualStyleBackColor = true;
-			this->button2->Click += gcnew System::EventHandler(this, &Form2::button2_Click);
+			this->button2->Click += gcnew System::EventHandler(this, &Form3::button2_Click);
 			// 
 			// textBoxAssociatedData
 			// 
@@ -176,7 +177,7 @@ namespace Project1 {
 			this->button3->TabIndex = 14;
 			this->button3->Text = L"Обзор";
 			this->button3->UseVisualStyleBackColor = true;
-			this->button3->Click += gcnew System::EventHandler(this, &Form2::button3_Click);
+			this->button3->Click += gcnew System::EventHandler(this, &Form3::button3_Click);
 			// 
 			// textBoxOutputFile
 			// 
@@ -195,7 +196,7 @@ namespace Project1 {
 			this->button4->TabIndex = 16;
 			this->button4->Text = L"Зашифровать";
 			this->button4->UseVisualStyleBackColor = true;
-			this->button4->Click += gcnew System::EventHandler(this, &Form2::button4_Click);
+			this->button4->Click += gcnew System::EventHandler(this, &Form3::button4_Click);
 			// 
 			// textBoxMessageNumber
 			// 
@@ -217,7 +218,7 @@ namespace Project1 {
 			this->label5->TabIndex = 18;
 			this->label5->Text = L"Номер сообщения:";
 			// 
-			// Form2
+			// Form3
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
@@ -235,33 +236,15 @@ namespace Project1 {
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->textBoxMessage);
-			this->Name = L"Form2";
-			this->Text = L"Form2";
-			this->Load += gcnew System::EventHandler(this, &Form2::Form2_Load);
+			this->Name = L"Form3";
+			this->Text = L"Form3";
+			this->Load += gcnew System::EventHandler(this, &Form3::Form3_Load);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
 		}
 #pragma endregion
 	private: System::Void button4_Click(System::Object^ sender, System::EventArgs^ e) {
-
-		string message = marshal_as<string>(textBoxMessage->Text);
-		if (message == "" || message == "Заполните это поле") {
-			textBoxMessage->Text = "Заполните это поле";
-			return;
-		}
-
-		string ass = marshal_as<string>(textBoxAssociatedData->Text);
-		if (ass == "" || ass == "Заполните это поле") {
-			textBoxAssociatedData->Text = "Заполните это поле";
-			return;
-		}
-		string output = marshal_as<string>(textBoxOutputFile->Text);
-		if (output == "" || output == "Заполните это поле") {
-			textBoxOutputFile->Text = "Заполните это поле";
-			return;
-		}
-
 		vector<vector<unsigned char>> result = _cipher->cipher(marshal_as<string>(textBoxMessage->Text), marshal_as<string>(textBoxAssociatedData->Text));
 		ofstream outputFile;
 		outputFile.open(marshal_as<string>(textBoxOutputFile->Text), std::ios::app);
@@ -310,7 +293,9 @@ namespace Project1 {
 			textBoxOutputFile->Text = fileName;
 		}
 	}
-private: System::Void Form2_Load(System::Object^ sender, System::EventArgs^ e) {
+	private: System::Void label1_Click(System::Object^ sender, System::EventArgs^ e) {
+	}
+private: System::Void Form3_Load(System::Object^ sender, System::EventArgs^ e) {
 }
 };
 }

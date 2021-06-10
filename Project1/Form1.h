@@ -3,6 +3,7 @@
 #include <msclr/marshal_cppstd.h>
 #include "CS.h"
 #include "Form2.h"
+#include "Form3.h"
 
 namespace Project1 {
 
@@ -70,6 +71,8 @@ namespace Project1 {
 	private: System::Windows::Forms::Label^ label9;
 	private: System::Windows::Forms::Button^ button8;
 	private: System::Windows::Forms::TextBox^ textBoxFolder;
+	private: System::Windows::Forms::RadioButton^ radioButton1;
+	private: System::Windows::Forms::RadioButton^ radioButton2;
 
 
 	private:
@@ -104,6 +107,8 @@ namespace Project1 {
 			this->label9 = (gcnew System::Windows::Forms::Label());
 			this->button8 = (gcnew System::Windows::Forms::Button());
 			this->textBoxFolder = (gcnew System::Windows::Forms::TextBox());
+			this->radioButton1 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButton2 = (gcnew System::Windows::Forms::RadioButton());
 			this->SuspendLayout();
 			// 
 			// textBoxKey
@@ -129,11 +134,12 @@ namespace Project1 {
 			this->label1->AutoSize = true;
 			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20, static_cast<System::Drawing::FontStyle>(((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)
 				| System::Drawing::FontStyle::Underline)), System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(204)));
-			this->label1->Location = System::Drawing::Point(132, 9);
+			this->label1->Location = System::Drawing::Point(145, 9);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(276, 31);
+			this->label1->Size = System::Drawing::Size(235, 31);
 			this->label1->TabIndex = 4;
-			this->label1->Text = L"Турбо шифрование";
+			this->label1->Text = L"CS шифрование";
+			this->label1->Click += gcnew System::EventHandler(this, &Form1::label1_Click);
 			// 
 			// label2
 			// 
@@ -322,7 +328,7 @@ namespace Project1 {
 			// 
 			// button9
 			// 
-			this->button9->Location = System::Drawing::Point(240, 383);
+			this->button9->Location = System::Drawing::Point(240, 445);
 			this->button9->Name = L"button9";
 			this->button9->Size = System::Drawing::Size(75, 23);
 			this->button9->TabIndex = 27;
@@ -359,11 +365,35 @@ namespace Project1 {
 			this->textBoxFolder->Size = System::Drawing::Size(322, 20);
 			this->textBoxFolder->TabIndex = 28;
 			// 
+			// radioButton1
+			// 
+			this->radioButton1->AutoSize = true;
+			this->radioButton1->Checked = true;
+			this->radioButton1->Location = System::Drawing::Point(52, 384);
+			this->radioButton1->Name = L"radioButton1";
+			this->radioButton1->Size = System::Drawing::Size(95, 17);
+			this->radioButton1->TabIndex = 31;
+			this->radioButton1->TabStop = true;
+			this->radioButton1->Text = L"Зашифровать";
+			this->radioButton1->UseVisualStyleBackColor = true;
+			// 
+			// radioButton2
+			// 
+			this->radioButton2->AutoSize = true;
+			this->radioButton2->Location = System::Drawing::Point(52, 407);
+			this->radioButton2->Name = L"radioButton2";
+			this->radioButton2->Size = System::Drawing::Size(101, 17);
+			this->radioButton2->TabIndex = 32;
+			this->radioButton2->Text = L"Расшифровать";
+			this->radioButton2->UseVisualStyleBackColor = true;
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(534, 428);
+			this->ClientSize = System::Drawing::Size(534, 480);
+			this->Controls->Add(this->radioButton2);
+			this->Controls->Add(this->radioButton1);
 			this->Controls->Add(this->label9);
 			this->Controls->Add(this->button8);
 			this->Controls->Add(this->textBoxFolder);
@@ -392,6 +422,7 @@ namespace Project1 {
 			this->Controls->Add(this->textBoxKey);
 			this->Name = L"Form1";
 			this->Text = L"Form1";
+			this->Load += gcnew System::EventHandler(this, &Form1::Form1_Load);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -457,6 +488,10 @@ namespace Project1 {
 		FolderBrowserDialog^ openDlg = gcnew FolderBrowserDialog();
 		if (System::Windows::Forms::DialogResult::OK == openDlg->ShowDialog())
 		{
+			ifstream inputFile;
+			string filename;
+
+
 			String^ fileName = openDlg->SelectedPath;
 			textBoxFolder->Text = fileName;
 			textBoxKey->Text = fileName + "\\key.txt";
@@ -469,5 +504,9 @@ namespace Project1 {
 		}
 	}
 	private: System::Void button9_Click(System::Object^ sender, System::EventArgs^ e);
+private: System::Void Form1_Load(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void label1_Click(System::Object^ sender, System::EventArgs^ e) {
+}
 };
 }

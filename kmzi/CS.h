@@ -20,8 +20,7 @@ public:
 
 	string getMessageNumber();
 	vector<vector<unsigned char>> cipher(string messageFilename, string associatedDataFilename);
-
-
+	vector<vector<unsigned char>> cipher(vector<unsigned char> message, vector<unsigned char> associatedData);
 
 	// Умножение в GF(128)
 	size_t BIT(size_t value);
@@ -30,34 +29,34 @@ public:
 	void GFMult128(vector<unsigned char>& Z, const vector<unsigned char> X, const vector<unsigned char> YBLOCK);
 
 	// Операция *
-	vector<unsigned char> QuasigroupOperation1(vector<unsigned char> left, vector<unsigned char> right);
+	vector<unsigned char> QuasigroupOperation1(vector<unsigned char>& left, vector<unsigned char>& right);
 
 	// Операция *'
-	vector<unsigned char> QuasigroupOperation2(vector<unsigned char> left, vector<unsigned char> right);
+	vector<unsigned char> QuasigroupOperation2(vector<unsigned char>& left, vector<unsigned char>& right);
 
 	// Биекция лямбда с хорошими рассеивающими свойствами
-	vector<unsigned char> Lambda(vector<unsigned char> x);
+	vector<unsigned char> Lambda(vector<unsigned char>& x);
 
 	// Отображение f(w), зависящее от ключа k
-	vector<unsigned char> f(vector<unsigned char> w);
+	vector<unsigned char> f(vector<unsigned char>& w);
 
 	// Отображение фи, зависящее от константы альфа
-	vector<unsigned char> phi(vector<unsigned char> x);
+	vector<unsigned char> phi(vector<unsigned char>& x);
 
 	// Отображение g(k, iv)
 	vector<vector<unsigned char>> g();
 
 	// Сложение по модулю 2^128
-	vector<unsigned char> summ(vector<unsigned char> left, vector<unsigned char> right);
+	vector<unsigned char> summ(vector<unsigned char>& left, vector<unsigned char>& right);
 
 	// Блок гаммы
-	vector<unsigned char> gamma(vector<unsigned char> blockNumber, vector<vector<unsigned char>> calculatedKey);
+	vector<unsigned char> gamma(vector<unsigned char>& blockNumber, vector<vector<unsigned char>>& calculatedKey);
 
 	// Вычисление ассоциированного вектора
-	vector<unsigned char> AssociatedVector(vector<unsigned char> associatedMessage, vector<unsigned char> bt);
+	vector<unsigned char> AssociatedVector(vector<unsigned char>& associatedMessage, vector<unsigned char>& bt);
 
 	// Шифрование открытого текста
-	vector<vector<unsigned char>> mrt(vector<unsigned char> plaintext, vector<vector<unsigned char>> calculatedKey, size_t len_p);
+	vector<vector<unsigned char>> mrt(vector<unsigned char>& plaintext, vector<vector<unsigned char>>& calculatedKey, size_t len_p);
 
 	// Перевод десятичного числа в двоичное
 	vector<unsigned char> decToBin(size_t dec);
@@ -69,12 +68,12 @@ public:
 	vector<unsigned char> lenghtConcat(size_t lenMessage, size_t lenAssMessage);
 
 	// Вычисление имитовставки (метки)
-	vector<unsigned char> immitationInsert(vector<unsigned char> A, vector<vector<unsigned char>> m, vector<vector<unsigned char>> calculatedKey);
+	vector<unsigned char> immitationInsert(vector<unsigned char>& A, vector<vector<unsigned char>>& m, vector<vector<unsigned char>>& calculatedKey);
 
-	unsigned char hexToDec(string hex);
-	vector<unsigned char> readMessage(string filename);
-	vector<unsigned char> readOneDimensionalVector(string filename);
-	vector<vector<unsigned char>> readTwoDimensionalVector(string filename);
+	unsigned char hexToDec(string& hex);
+	vector<unsigned char> readMessage(string& filename);
+	vector<unsigned char> readOneDimensionalVector(string& filename);
+	vector<vector<unsigned char>> readTwoDimensionalVector(string& filename);
 	void nextMessage();
 
 private:
@@ -129,6 +128,30 @@ inline vector<vector<unsigned char>> CS::cipher(string messageFilename, string a
 		message.push_back(0x00);
 	}
 	vector<unsigned char> associatedData = readMessage(associatedDataFilename);
+	while (associatedData.size() % 16 != 0) {
+		associatedData.push_back(0x00);
+	}
+	size_t len = message.size();
+
+	vector<vector<unsigned char>> calculatedKey = this->g();
+	vector<unsigned char> A = this->AssociatedVector(associatedData, calculatedKey[1]);
+	vector<vector<unsigned char>> m = this->mrt(message, calculatedKey, len / 16);
+	vector<unsigned char> mark = this->immitationInsert(A, m, calculatedKey);
+	vector<vector<unsigned char>> result = { associatedData };
+	for (size_t i = 0; i < len / 16; i++) {
+		result.push_back(m[i]);
+	}
+	result.push_back(mark);
+	this->nextMessage();
+
+	return result;
+}
+
+inline vector<vector<unsigned char>> CS::cipher(vector<unsigned char> message, vector<unsigned char> associatedData)
+{
+	while (message.size() % 16 != 0) {
+		message.push_back(0x00);
+	}
 	while (associatedData.size() % 16 != 0) {
 		associatedData.push_back(0x00);
 	}
@@ -235,7 +258,7 @@ inline void CS::GFMult128(vector<unsigned char>& Z, const vector<unsigned char> 
 	}
 }
 
-inline vector<unsigned char> CS::QuasigroupOperation1(vector<unsigned char> left, vector<unsigned char> right)
+inline vector<unsigned char> CS::QuasigroupOperation1(vector<unsigned char>& left, vector<unsigned char>& right)
 {
 	vector<unsigned char> result;
 	for (size_t i = 0; i < 16; i++) {
@@ -244,7 +267,7 @@ inline vector<unsigned char> CS::QuasigroupOperation1(vector<unsigned char> left
 	return result;
 }
 
-inline vector<unsigned char> CS::QuasigroupOperation2(vector<unsigned char> left, vector<unsigned char> right)
+inline vector<unsigned char> CS::QuasigroupOperation2(vector<unsigned char>& left, vector<unsigned char>& right)
 {
 	vector<unsigned char> result;
 	for (size_t i = 0; i < 16; i++) {
@@ -253,7 +276,7 @@ inline vector<unsigned char> CS::QuasigroupOperation2(vector<unsigned char> left
 	return result;
 }
 
-inline vector<unsigned char> CS::Lambda(vector<unsigned char> x)
+inline vector<unsigned char> CS::Lambda(vector<unsigned char>& x)
 {
 	vector<unsigned char> result;
 	for (size_t i = 0; i < 16; i++) {
@@ -262,12 +285,12 @@ inline vector<unsigned char> CS::Lambda(vector<unsigned char> x)
 	return result;
 }
 
-inline vector<unsigned char> CS::f(vector<unsigned char> w)
+inline vector<unsigned char> CS::f(vector<unsigned char>& w)
 {
 	return this->QuasigroupOperation1(this->Lambda(this->QuasigroupOperation1(w, _key[0])), _key[1]);
 }
 
-inline vector<unsigned char> CS::phi(vector<unsigned char> x)
+inline vector<unsigned char> CS::phi(vector<unsigned char>& x)
 {
 	vector<unsigned char> result;
 	for (size_t i = 0; i < 16; i++) {
@@ -288,7 +311,7 @@ inline vector<vector<unsigned char>> CS::g()
 	return result;
 }
 
-inline vector<unsigned char> CS::summ(vector<unsigned char> left, vector<unsigned char> right)
+inline vector<unsigned char> CS::summ(vector<unsigned char>& left, vector<unsigned char>& right)
 {
 	vector<unsigned char> result = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	unsigned char perenos = 0x00;
@@ -306,7 +329,7 @@ inline vector<unsigned char> CS::summ(vector<unsigned char> left, vector<unsigne
 	return result;
 }
 
-inline vector<unsigned char> CS::gamma(vector<unsigned char> blockNumber, vector<vector<unsigned char>> calculatedKey)
+inline vector<unsigned char> CS::gamma(vector<unsigned char>& blockNumber, vector<vector<unsigned char>>& calculatedKey)
 {
 	vector<unsigned char> wi = this->summ(blockNumber, _i0);
 	vector<unsigned char> ci = this->f(wi);
@@ -322,7 +345,7 @@ inline vector<unsigned char> CS::gamma(vector<unsigned char> blockNumber, vector
 	return result;
 }
 
-inline vector<unsigned char> CS::AssociatedVector(vector<unsigned char> associatedMessage, vector<unsigned char> bt)
+inline vector<unsigned char> CS::AssociatedVector(vector<unsigned char>& associatedMessage, vector<unsigned char>& bt)
 {
 	vector<unsigned char> result(16, 0x00);
 	size_t associatedMessageLength = associatedMessage.size() / 16;
@@ -341,7 +364,7 @@ inline vector<unsigned char> CS::AssociatedVector(vector<unsigned char> associat
 	return result;
 }
 
-inline vector<vector<unsigned char>> CS::mrt(vector<unsigned char> plaintext, vector<vector<unsigned char>> calculatedKey, size_t len_p)
+inline vector<vector<unsigned char>> CS::mrt(vector<unsigned char>& plaintext, vector<vector<unsigned char>>& calculatedKey, size_t len_p)
 {
 	vector<vector<unsigned char>> result(len_p);
 	vector<unsigned char> tempCB;
@@ -409,7 +432,7 @@ inline vector<unsigned char> CS::lenghtConcat(size_t lenMessage, size_t lenAssMe
 	return result;
 }
 
-inline vector<unsigned char> CS::immitationInsert(vector<unsigned char> A, vector<vector<unsigned char>> m, vector<vector<unsigned char>> calculatedKey)
+inline vector<unsigned char> CS::immitationInsert(vector<unsigned char>& A, vector<vector<unsigned char>>& m, vector<vector<unsigned char>>& calculatedKey)
 {
 	vector<unsigned char> result;
 	vector<unsigned char> temp;
@@ -433,7 +456,7 @@ inline vector<unsigned char> CS::immitationInsert(vector<unsigned char> A, vecto
 	return result;
 }
 
-inline unsigned char CS::hexToDec(string hex)
+inline unsigned char CS::hexToDec(string& hex)
 {
 	unsigned char leftByte = 0;
 	unsigned char rightByte = 0;
@@ -452,7 +475,7 @@ inline unsigned char CS::hexToDec(string hex)
 	return leftByte * 16 + rightByte;
 }
 
-inline vector<unsigned char> CS::readMessage(string filename)
+inline vector<unsigned char> CS::readMessage(string& filename)
 {
 	vector<unsigned char> result;
 	ifstream inputFile;
@@ -470,7 +493,7 @@ inline vector<unsigned char> CS::readMessage(string filename)
 	return result;
 }
 
-inline vector<unsigned char> CS::readOneDimensionalVector(string filename)
+inline vector<unsigned char> CS::readOneDimensionalVector(string& filename)
 {
 	vector<unsigned char> result;
 	ifstream inputFile;
@@ -489,7 +512,7 @@ inline vector<unsigned char> CS::readOneDimensionalVector(string filename)
 	return result;
 }
 
-inline vector<vector<unsigned char>> CS::readTwoDimensionalVector(string filename)
+inline vector<vector<unsigned char>> CS::readTwoDimensionalVector(string& filename)
 {
 	vector<vector<unsigned char>> result;
 	ifstream inputFile;

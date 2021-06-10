@@ -362,8 +362,6 @@ void ByteConcatenation(vector<unsigned char>& concat, const vector<unsigned char
 	}
 */
 	len_concat = lenghtConcat(C.size(), A.size());
-	printf("%s\n", "JOPa: ");
-	PrintVector(len_concat, 16);
 
 	for (int i = 0; i < len_total; i++)				// Once the concatenation of the lenght is shifted and stored, we can compute the final concatenation
 	{
@@ -381,7 +379,7 @@ void ByteConcatenation(vector<unsigned char>& concat, const vector<unsigned char
 		}
 	}
 
-	printf("%s\n", "Concatenation: ");
+	//printf("%s\n", "Concatenation: ");
 	//PrintVector(concat, len_total);
 }
 
