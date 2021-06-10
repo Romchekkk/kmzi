@@ -28,7 +28,7 @@ public:
 	~CS();
 
 	string getMessageNumber();
-	vector<vector<unsigned char>> cipher(string messageFilename, string associatedDataFilename);
+	vector<vector<unsigned char>> cipher(string messageFilename, string associatedDataFilename, string calcKeyFilename = "", string CDFilename = "");
 
 private:
 	vector<vector<unsigned char>> _key;
@@ -129,7 +129,7 @@ inline string CS::getMessageNumber()
 	return string(str);
 }
 
-inline vector<vector<unsigned char>> CS::cipher(string messageFilename, string associatedDataFilename)
+inline vector<vector<unsigned char>> CS::cipher(string messageFilename, string associatedDataFilename, string calcKeyFilename, string CDFilename)
 {
 	vector<unsigned char> message = readMessage(messageFilename);
 	while (message.size() % 16 != 0) {
@@ -142,6 +142,22 @@ inline vector<vector<unsigned char>> CS::cipher(string messageFilename, string a
 	size_t len = message.size();
 
 	vector<vector<unsigned char>> calculatedKey = this->g();
+	if (calcKeyFilename != "") {
+		ofstream outputFile;
+		outputFile.open(calcKeyFilename, std::ios::app);
+		if (!outputFile) {
+			exit(1);
+		}
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 16; j++) {
+				char str[3];
+				_itoa_s(calculatedKey[i][j], str, 16);
+				outputFile << str << " ";
+			}
+			outputFile.put('\n');
+		}
+		outputFile << "\n";
+	}
 	vector<unsigned char> A = this->AssociatedVector(associatedData, calculatedKey[1]);
 	vector<vector<unsigned char>> m = this->mrt(message, calculatedKey, len / 16);
 	vector<unsigned char> mark = this->immitationInsert(A, m, calculatedKey);

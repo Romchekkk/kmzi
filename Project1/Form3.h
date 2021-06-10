@@ -54,9 +54,9 @@ namespace Project1 {
 	private: System::Windows::Forms::TextBox^ textBoxOutputFile;
 
 	private: System::Windows::Forms::Button^ button4;
-	private: System::Windows::Forms::TextBox^ textBoxMessageNumber;
 
-	private: System::Windows::Forms::Label^ label5;
+
+
 
 
 	private:
@@ -83,8 +83,6 @@ namespace Project1 {
 			this->button3 = (gcnew System::Windows::Forms::Button());
 			this->textBoxOutputFile = (gcnew System::Windows::Forms::TextBox());
 			this->button4 = (gcnew System::Windows::Forms::Button());
-			this->textBoxMessageNumber = (gcnew System::Windows::Forms::TextBox());
-			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->SuspendLayout();
 			// 
 			// label2
@@ -96,7 +94,7 @@ namespace Project1 {
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(192, 17);
 			this->label2->TabIndex = 8;
-			this->label2->Text = L"Зашифрование сообщение:";
+			this->label2->Text = L"Зашифрованое сообщение:";
 			// 
 			// button1
 			// 
@@ -121,7 +119,7 @@ namespace Project1 {
 			this->label1->AutoSize = true;
 			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20, static_cast<System::Drawing::FontStyle>(((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)
 				| System::Drawing::FontStyle::Underline)), System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(204)));
-			this->label1->Location = System::Drawing::Point(145, 9);
+			this->label1->Location = System::Drawing::Point(129, 9);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(282, 31);
 			this->label1->TabIndex = 9;
@@ -194,37 +192,15 @@ namespace Project1 {
 			this->button4->Name = L"button4";
 			this->button4->Size = System::Drawing::Size(95, 23);
 			this->button4->TabIndex = 16;
-			this->button4->Text = L"Зашифровать";
+			this->button4->Text = L"Расшифровать";
 			this->button4->UseVisualStyleBackColor = true;
 			this->button4->Click += gcnew System::EventHandler(this, &Form3::button4_Click);
-			// 
-			// textBoxMessageNumber
-			// 
-			this->textBoxMessageNumber->Location = System::Drawing::Point(167, 318);
-			this->textBoxMessageNumber->Name = L"textBoxMessageNumber";
-			this->textBoxMessageNumber->ReadOnly = true;
-			this->textBoxMessageNumber->Size = System::Drawing::Size(43, 20);
-			this->textBoxMessageNumber->TabIndex = 17;
-			this->textBoxMessageNumber->Text = L"1";
-			this->textBoxMessageNumber->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
-			// 
-			// label5
-			// 
-			this->label5->AutoSize = true;
-			this->label5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10));
-			this->label5->Location = System::Drawing::Point(28, 318);
-			this->label5->Name = L"label5";
-			this->label5->Size = System::Drawing::Size(133, 17);
-			this->label5->TabIndex = 18;
-			this->label5->Text = L"Номер сообщения:";
 			// 
 			// Form3
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(534, 428);
-			this->Controls->Add(this->label5);
-			this->Controls->Add(this->textBoxMessageNumber);
 			this->Controls->Add(this->button4);
 			this->Controls->Add(this->label4);
 			this->Controls->Add(this->button3);
@@ -267,7 +243,6 @@ namespace Project1 {
 			}
 		}
 		outputFile << "\n}\n\n";
-		textBoxMessageNumber->Text = marshal_as<String^>(_cipher->getMessageNumber());
 	}
 	private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e) {
 		OpenFileDialog^ openDlg = gcnew OpenFileDialog();
