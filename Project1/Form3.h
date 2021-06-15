@@ -94,19 +94,17 @@ namespace Project1 {
 			this->label2->AutoSize = true;
 			this->label2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
-			this->label2->Location = System::Drawing::Point(35, 130);
-			this->label2->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
+			this->label2->Location = System::Drawing::Point(26, 106);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(244, 20);
+			this->label2->Size = System::Drawing::Size(192, 17);
 			this->label2->TabIndex = 8;
 			this->label2->Text = L"Зашифрованое сообщение:";
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(557, 153);
-			this->button1->Margin = System::Windows::Forms::Padding(4);
+			this->button1->Location = System::Drawing::Point(418, 124);
 			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(100, 28);
+			this->button1->Size = System::Drawing::Size(75, 23);
 			this->button1->TabIndex = 7;
 			this->button1->Text = L"Обзор";
 			this->button1->UseVisualStyleBackColor = true;
@@ -114,11 +112,10 @@ namespace Project1 {
 			// 
 			// textBoxMessage
 			// 
-			this->textBoxMessage->Location = System::Drawing::Point(39, 155);
-			this->textBoxMessage->Margin = System::Windows::Forms::Padding(4);
+			this->textBoxMessage->Location = System::Drawing::Point(29, 126);
 			this->textBoxMessage->Name = L"textBoxMessage";
 			this->textBoxMessage->ReadOnly = true;
-			this->textBoxMessage->Size = System::Drawing::Size(428, 22);
+			this->textBoxMessage->Size = System::Drawing::Size(322, 20);
 			this->textBoxMessage->TabIndex = 6;
 			// 
 			// label1
@@ -126,10 +123,9 @@ namespace Project1 {
 			this->label1->AutoSize = true;
 			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20, static_cast<System::Drawing::FontStyle>(((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)
 				| System::Drawing::FontStyle::Underline)), System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(204)));
-			this->label1->Location = System::Drawing::Point(172, 11);
-			this->label1->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
+			this->label1->Location = System::Drawing::Point(129, 9);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(351, 39);
+			this->label1->Size = System::Drawing::Size(282, 31);
 			this->label1->TabIndex = 9;
 			this->label1->Text = L"CS расшифрование";
 			this->label1->Click += gcnew System::EventHandler(this, &Form3::label1_Click);
@@ -139,19 +135,17 @@ namespace Project1 {
 			this->label3->AutoSize = true;
 			this->label3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
-			this->label3->Location = System::Drawing::Point(35, 218);
-			this->label3->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
+			this->label3->Location = System::Drawing::Point(26, 177);
 			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(235, 20);
+			this->label3->Size = System::Drawing::Size(186, 17);
 			this->label3->TabIndex = 12;
 			this->label3->Text = L"Ассоциированные данные:";
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(557, 240);
-			this->button2->Margin = System::Windows::Forms::Padding(4);
+			this->button2->Location = System::Drawing::Point(418, 195);
 			this->button2->Name = L"button2";
-			this->button2->Size = System::Drawing::Size(100, 28);
+			this->button2->Size = System::Drawing::Size(75, 23);
 			this->button2->TabIndex = 11;
 			this->button2->Text = L"Обзор";
 			this->button2->UseVisualStyleBackColor = true;
@@ -159,11 +153,10 @@ namespace Project1 {
 			// 
 			// textBoxAssociatedData
 			// 
-			this->textBoxAssociatedData->Location = System::Drawing::Point(39, 242);
-			this->textBoxAssociatedData->Margin = System::Windows::Forms::Padding(4);
+			this->textBoxAssociatedData->Location = System::Drawing::Point(29, 197);
 			this->textBoxAssociatedData->Name = L"textBoxAssociatedData";
 			this->textBoxAssociatedData->ReadOnly = true;
-			this->textBoxAssociatedData->Size = System::Drawing::Size(428, 22);
+			this->textBoxAssociatedData->Size = System::Drawing::Size(322, 20);
 			this->textBoxAssociatedData->TabIndex = 10;
 			// 
 			// label4
@@ -171,20 +164,18 @@ namespace Project1 {
 			this->label4->AutoSize = true;
 			this->label4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
-			this->label4->Location = System::Drawing::Point(35, 305);
-			this->label4->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
+			this->label4->Location = System::Drawing::Point(26, 248);
 			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(243, 20);
+			this->label4->Size = System::Drawing::Size(188, 17);
 			this->label4->TabIndex = 15;
 			this->label4->Text = L"Куда поместить результат:";
 			// 
 			// button3
 			// 
 			this->button3->DialogResult = System::Windows::Forms::DialogResult::Cancel;
-			this->button3->Location = System::Drawing::Point(557, 327);
-			this->button3->Margin = System::Windows::Forms::Padding(4);
+			this->button3->Location = System::Drawing::Point(418, 266);
 			this->button3->Name = L"button3";
-			this->button3->Size = System::Drawing::Size(100, 28);
+			this->button3->Size = System::Drawing::Size(75, 23);
 			this->button3->TabIndex = 14;
 			this->button3->Text = L"Обзор";
 			this->button3->UseVisualStyleBackColor = true;
@@ -192,20 +183,18 @@ namespace Project1 {
 			// 
 			// textBoxOutputFile
 			// 
-			this->textBoxOutputFile->Location = System::Drawing::Point(39, 330);
-			this->textBoxOutputFile->Margin = System::Windows::Forms::Padding(4);
+			this->textBoxOutputFile->Location = System::Drawing::Point(29, 268);
 			this->textBoxOutputFile->Name = L"textBoxOutputFile";
 			this->textBoxOutputFile->ReadOnly = true;
-			this->textBoxOutputFile->Size = System::Drawing::Size(428, 22);
+			this->textBoxOutputFile->Size = System::Drawing::Size(322, 20);
 			this->textBoxOutputFile->TabIndex = 13;
 			// 
 			// button4
 			// 
 			this->button4->DialogResult = System::Windows::Forms::DialogResult::Cancel;
-			this->button4->Location = System::Drawing::Point(289, 484);
-			this->button4->Margin = System::Windows::Forms::Padding(4);
+			this->button4->Location = System::Drawing::Point(217, 393);
 			this->button4->Name = L"button4";
-			this->button4->Size = System::Drawing::Size(127, 28);
+			this->button4->Size = System::Drawing::Size(95, 23);
 			this->button4->TabIndex = 16;
 			this->button4->Text = L"Расшифровать";
 			this->button4->UseVisualStyleBackColor = true;
@@ -213,9 +202,10 @@ namespace Project1 {
 			// 
 			// progressBar1
 			// 
-			this->progressBar1->Location = System::Drawing::Point(39, 408);
+			this->progressBar1->Location = System::Drawing::Point(29, 332);
+			this->progressBar1->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->progressBar1->Name = L"progressBar1";
-			this->progressBar1->Size = System::Drawing::Size(618, 23);
+			this->progressBar1->Size = System::Drawing::Size(464, 19);
 			this->progressBar1->TabIndex = 17;
 			this->progressBar1->Click += gcnew System::EventHandler(this, &Form3::progressBar1_Click);
 			// 
@@ -223,17 +213,18 @@ namespace Project1 {
 			// 
 			this->labelCondition->AutoSize = true;
 			this->labelCondition->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10));
-			this->labelCondition->Location = System::Drawing::Point(36, 379);
+			this->labelCondition->Location = System::Drawing::Point(27, 308);
+			this->labelCondition->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->labelCondition->Name = L"labelCondition";
-			this->labelCondition->Size = System::Drawing::Size(203, 20);
+			this->labelCondition->Size = System::Drawing::Size(181, 17);
 			this->labelCondition->TabIndex = 18;
-			this->labelCondition->Text = L"Прогресс шифрования";
+			this->labelCondition->Text = L"Прогресс расшифрования";
 			// 
 			// Form3
 			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
+			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(712, 527);
+			this->ClientSize = System::Drawing::Size(534, 428);
 			this->Controls->Add(this->labelCondition);
 			this->Controls->Add(this->progressBar1);
 			this->Controls->Add(this->button4);
@@ -247,7 +238,6 @@ namespace Project1 {
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->textBoxMessage);
-			this->Margin = System::Windows::Forms::Padding(4);
 			this->Name = L"Form3";
 			this->Text = L"Form3";
 			this->Load += gcnew System::EventHandler(this, &Form3::Form3_Load);

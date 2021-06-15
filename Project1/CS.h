@@ -28,7 +28,7 @@ public:
 	~CS();
 
 	string getMessageNumber();
-	vector<vector<unsigned char>> cipher(string messageFilename, string associatedDataFilename, string calcKeyFilename = "", string CDFilename = "");
+	vector<vector<unsigned char>> cipher(string messageFilename, string associatedDataFilename, string calcKeyFilename = "", string CFilename = "");
 
 private:
 	vector<vector<unsigned char>> _key;
@@ -68,13 +68,13 @@ private:
 	vector<unsigned char> summ(vector<unsigned char> left, vector<unsigned char> right);
 
 	// Блок гаммы
-	vector<unsigned char> gamma(vector<unsigned char> blockNumber, vector<vector<unsigned char>> calculatedKey);
+	vector<unsigned char> gamma(vector<unsigned char> blockNumber, vector<vector<unsigned char>> calculatedKey, string CFilename);
 
 	// Вычисление ассоциированного вектора
 	vector<unsigned char> AssociatedVector(vector<unsigned char> associatedMessage, vector<unsigned char> bt);
 
 	// Шифрование открытого текста
-	vector<vector<unsigned char>> mrt(vector<unsigned char> plaintext, vector<vector<unsigned char>> calculatedKey, size_t len_p);
+	vector<vector<unsigned char>> mrt(vector<unsigned char> plaintext, vector<vector<unsigned char>> calculatedKey, size_t len_p, string CFilename);
 
 	// Перевод десятичного числа в двоичное
 	vector<unsigned char> decToBin(size_t dec);
@@ -129,7 +129,7 @@ inline string CS::getMessageNumber()
 	return string(str);
 }
 
-inline vector<vector<unsigned char>> CS::cipher(string messageFilename, string associatedDataFilename, string calcKeyFilename, string CDFilename)
+inline vector<vector<unsigned char>> CS::cipher(string messageFilename, string associatedDataFilename, string calcKeyFilename, string CFilename)
 {
 	vector<unsigned char> message = readMessage(messageFilename);
 	while (message.size() % 16 != 0) {
@@ -159,7 +159,7 @@ inline vector<vector<unsigned char>> CS::cipher(string messageFilename, string a
 		outputFile << "\n";
 	}
 	vector<unsigned char> A = this->AssociatedVector(associatedData, calculatedKey[1]);
-	vector<vector<unsigned char>> m = this->mrt(message, calculatedKey, len / 16);
+	vector<vector<unsigned char>> m = this->mrt(message, calculatedKey, len / 16, CFilename);
 	vector<unsigned char> mark = this->immitationInsert(A, m, calculatedKey);
 	vector<vector<unsigned char>> result = { associatedData };
 	for (size_t i = 0; i < len / 16; i++) {
@@ -329,10 +329,23 @@ inline vector<unsigned char> CS::summ(vector<unsigned char> left, vector<unsigne
 	return result;
 }
 
-inline vector<unsigned char> CS::gamma(vector<unsigned char> blockNumber, vector<vector<unsigned char>> calculatedKey)
+inline vector<unsigned char> CS::gamma(vector<unsigned char> blockNumber, vector<vector<unsigned char>> calculatedKey, string CFilename)
 {
 	vector<unsigned char> wi = this->summ(blockNumber, _i0);
 	vector<unsigned char> ci = this->f(wi);
+	if (CFilename != "") {
+		ofstream outputFile;
+		outputFile.open(CFilename, std::ios::app);
+		if (!outputFile) {
+			exit(1);
+		}
+		for (int i = 0; i < 16; i++) {
+			char str[3];
+			_itoa_s(ci[i], str, 16);
+			outputFile << str << " ";
+		}
+		outputFile.put('\n');
+	}
 	vector<unsigned char> di = this->phi(ci);
 	vector<unsigned char> left(16, 0);
 	GFMult128(left, ci, calculatedKey[0]);
@@ -364,7 +377,7 @@ inline vector<unsigned char> CS::AssociatedVector(vector<unsigned char> associat
 	return result;
 }
 
-inline vector<vector<unsigned char>> CS::mrt(vector<unsigned char> plaintext, vector<vector<unsigned char>> calculatedKey, size_t len_p)
+inline vector<vector<unsigned char>> CS::mrt(vector<unsigned char> plaintext, vector<vector<unsigned char>> calculatedKey, size_t len_p, string CFilename)
 {
 	vector<vector<unsigned char>> result(len_p);
 	vector<unsigned char> tempCB;
@@ -373,7 +386,7 @@ inline vector<vector<unsigned char>> CS::mrt(vector<unsigned char> plaintext, ve
 
 	for (size_t i = 0; i < len_p; i++)
 	{
-		tempCB = this->gamma(blockNumber, calculatedKey);
+		tempCB = this->gamma(blockNumber, calculatedKey, CFilename);
 		for (size_t j = 0; j < 16; j++)
 		{
 			result[i].push_back(plaintext[(i * 16) + j] ^ tempCB[j]);
