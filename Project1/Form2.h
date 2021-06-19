@@ -441,31 +441,18 @@ namespace Project1 {
 		progressBar1->Value = 25;
 		vector<vector<unsigned char>> result = _cipher->cipher(marshal_as<string>(textBoxMessage->Text), marshal_as<string>(textBoxAssociatedData->Text), marshal_as<string>(textBoxCalcKeyWrite->Text), marshal_as<string>(textBoxCDWrite->Text));
 		progressBar1->Value = 60;
-		ofstream outputFile;
-		outputFile.open(marshal_as<string>(textBoxOutputFile->Text), std::ios::app);
 		ofstream outputMessageFile;
-		outputMessageFile.open("test.bin", std::ios_base::out | std::ios_base::binary);
-		if (!outputFile) {
+		outputMessageFile.open(marshal_as<string>(textBoxOutputFile->Text), std::ios_base::out | std::ios_base::binary);
+		if (!outputMessageFile) {
 			exit(1);
 		}
-		outputFile << "Ассоциированные данные\n{\n";
-		size_t i = 0;
-		while (result[0][i]) {
-			outputFile.put(result[0][i]);
-			i++;
-		}
-
-		//labelCondition->Text = "Запись шифрованных данных";
+		labelCondition->Text = "Запись шифрованных данных";
 		progressBar1->Value = 80;
-
-		outputFile << "\n}\nЗашифрованное сообщение\n{";
 		for (size_t j = 1; j < result.size(); j++) {
 			for (size_t k = 0; k < result[j].size(); k++) {
 				outputMessageFile.put(result[j][k]);
-				outputFile.put(result[j][k]);
 			}
 		}
-		outputFile << "\n}\n\n";
 		textBoxMessageNumber->Text = marshal_as<String^>(_cipher->getMessageNumber());
 		labelCondition->Text = "Работа завершена успешно";
 		progressBar1->Value = 100;

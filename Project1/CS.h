@@ -22,13 +22,15 @@ using namespace msclr::interop;
 class CS
 {
 public:
-	CS(vector<vector<unsigned char>> key, vector<vector<unsigned char>> iv, vector<unsigned char> alpha, vector<unsigned char> i0, vector<unsigned char> lambda, vector<vector<unsigned char>> OLS1, vector<vector<unsigned char>> OLS2);
+	CS(vector<vector<unsigned char>> key, vector<vector<unsigned char>> iv, vector<unsigned char> alpha, vector<unsigned char> i0, vector<vector<vector<unsigned char>>> lambda, vector<vector<unsigned char>> OLS1, vector<vector<unsigned char>> OLS2);
 	CS(string key, string iv, string alpha, string i0, string lambda, string OLS1, string OLS2);
 	CS(const CS& copy);
 	~CS();
 
 	string getMessageNumber();
 	vector<vector<unsigned char>> cipher(string messageFilename, string associatedDataFilename, string calcKeyFilename = "", string CFilename = "");
+	bool checkImitationInsert(string messageFilename, string associatedDataFilename, string calcKeyFilename = "");
+	string decipher(string messageFilename, string associatedDataFilename, string CFilename = "");
 
 private:
 	vector<vector<unsigned char>> _key;
@@ -37,8 +39,10 @@ private:
 	vector<unsigned char> _i0;
 	vector<vector<unsigned char>> _OLS1;
 	vector<vector<unsigned char>> _OLS2;
-	vector<unsigned char> _lambda;
+	vector<vector<vector<unsigned char>>> _lambda;
 	size_t _messageNumber;
+	vector<vector<unsigned char>> _calculatedKey;
+	vector<vector<unsigned char>> _m;
 
 	// Умножение в GF(128)
 	size_t BIT(size_t value);
@@ -90,12 +94,14 @@ private:
 
 	unsigned char hexToDec(string hex);
 	vector<unsigned char> readMessage(string filename);
+	vector<unsigned char> readCipherMessage(string filename);
 	vector<unsigned char> readOneDimensionalVector(string filename);
 	vector<vector<unsigned char>> readTwoDimensionalVector(string filename);
+	vector<vector<vector<unsigned char>>> readThreeDimensionalVector(string filename);
 	void nextMessage();
 };
 
-inline CS::CS(vector<vector<unsigned char>> key, vector<vector<unsigned char>> iv, vector<unsigned char> alpha, vector<unsigned char> i0, vector<unsigned char> lambda, vector<vector<unsigned char>> OLS1, vector<vector<unsigned char>> OLS2)
+inline CS::CS(vector<vector<unsigned char>> key, vector<vector<unsigned char>> iv, vector<unsigned char> alpha, vector<unsigned char> i0, vector<vector<vector<unsigned char>>> lambda, vector<vector<unsigned char>> OLS1, vector<vector<unsigned char>> OLS2)
 	: _key(key), _iv(iv), _alpha(alpha), _i0(i0), _OLS1(OLS1), _OLS2(OLS2), _lambda(lambda)
 {
 	_messageNumber = 1;
@@ -107,7 +113,7 @@ inline CS::CS(string key, string iv, string alpha, string i0, string lambda, str
 	_iv = this->readTwoDimensionalVector(iv);
 	_alpha = this->readOneDimensionalVector(alpha);
 	_i0 = this->readOneDimensionalVector(i0);
-	_lambda = this->readOneDimensionalVector(lambda);
+	_lambda = this->readThreeDimensionalVector(lambda);
 	_OLS1 = this->readTwoDimensionalVector(OLS1);
 	_OLS2 = this->readTwoDimensionalVector(OLS2);
 	_messageNumber = 1;
@@ -152,7 +158,13 @@ inline vector<vector<unsigned char>> CS::cipher(string messageFilename, string a
 			for (int j = 0; j < 16; j++) {
 				char str[3];
 				_itoa_s(calculatedKey[i][j], str, 16);
-				outputFile << str << " ";
+				if (strlen(str) == 1) {
+					string symb = str;
+					outputFile << "0" + symb << " ";
+				}
+				else {
+					outputFile << str << " ";
+				}
 			}
 			outputFile.put('\n');
 		}
@@ -169,6 +181,85 @@ inline vector<vector<unsigned char>> CS::cipher(string messageFilename, string a
 	this->nextMessage();
 
 	return result;
+}
+
+inline bool CS::checkImitationInsert(string messageFilename, string associatedDataFilename, string calcKeyFilename)
+{
+	vector<vector<unsigned char>> calculatedKey = this->g();
+	if (calcKeyFilename != "") {
+		ofstream outputFile;
+		outputFile.open(calcKeyFilename, std::ios::app);
+		if (!outputFile) {
+			exit(1);
+		}
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 16; j++) {
+				char str[3];
+				_itoa_s(calculatedKey[i][j], str, 16);
+				if (strlen(str) == 1) {
+					string symb = str;
+					outputFile << "0" + symb << " ";
+				}
+				else {
+					outputFile << str << " ";
+				}
+			}
+			outputFile.put('\n');
+		}
+		outputFile << "\n";
+	}
+
+	vector<unsigned char> message = readCipherMessage(messageFilename);
+	while (message.size() % 16 != 0) {
+		message.push_back(0x00);
+	}
+	vector<unsigned char> associatedData = readMessage(associatedDataFilename);
+	while (associatedData.size() % 16 != 0) {
+		associatedData.push_back(0x00);
+	}
+
+	size_t len = message.size()/16;
+	vector<unsigned char> getMark(16, 0x00);
+	vector<vector<unsigned char>> m(len-1, vector<unsigned char>(16, 0x00));
+	for (int i = 0; i < len; i++) {
+		for (int j = 0; j < 16; j++) {
+			if (i != len - 1) {
+				m[i][j] = message[i * 16 + j];
+			}
+			else {
+				getMark[j] = message[i * 16 + j];
+			}
+		}
+	}
+	vector<unsigned char> A = this->AssociatedVector(associatedData, calculatedKey[1]);
+	vector<unsigned char> mark = this->immitationInsert(A, m, calculatedKey);
+
+	if (getMark == mark) {
+		_calculatedKey = calculatedKey;
+		_m = m;
+		return true;
+	}
+
+	return false;
+}
+
+inline string CS::decipher(string messageFilename, string associatedDataFilename, string CFilename)
+{
+	string str;
+
+	vector<unsigned char> odin = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 };
+	vector<unsigned char> blockNumber = odin;
+	vector<unsigned char> tempGamma;
+	size_t len = _m.size();
+	for (size_t i = 0; i < len; i++) {
+		tempGamma = this->gamma(blockNumber, _calculatedKey, CFilename);
+		for (int j = 0; j < 16; j++) {
+			str.push_back( _m[i][j] ^ tempGamma[j] );
+		}
+		blockNumber = this->summ(blockNumber, odin);
+	}
+
+	return str;
 }
 
 inline size_t CS::BIT(size_t value)
@@ -278,9 +369,13 @@ inline vector<unsigned char> CS::QuasigroupOperation2(vector<unsigned char> left
 
 inline vector<unsigned char> CS::Lambda(vector<unsigned char> x)
 {
-	vector<unsigned char> result;
-	for (size_t i = 0; i < 16; i++) {
-		result.push_back(_lambda[x[i]]);
+	vector<unsigned char> result(16, 0x00);
+	vector<unsigned char> temp;
+	for (int i = 0; i < 16; i++) {
+		temp = _lambda[ x[i] ][ i ];
+		for (int j = 0; j < 16; j++) {
+			result[j] = result[j] ^ temp[j];
+		}
 	}
 	return result;
 }
@@ -342,7 +437,13 @@ inline vector<unsigned char> CS::gamma(vector<unsigned char> blockNumber, vector
 		for (int i = 0; i < 16; i++) {
 			char str[3];
 			_itoa_s(ci[i], str, 16);
-			outputFile << str << " ";
+			if (strlen(str) == 1) {
+				string symb = str;
+				outputFile << "0" + symb << " ";
+			}
+			else {
+				outputFile << str << " ";
+			}
 		}
 		outputFile.put('\n');
 	}
@@ -498,6 +599,7 @@ inline vector<unsigned char> CS::readMessage(string filename)
 		MessageBox::Show(marshal_as<String^>(str), "Ошибка", MessageBoxButtons::OK, MessageBoxIcon::Warning);
 		return result;
 	}
+
 	unsigned char s;
 	char n = '\0';
 	do {
@@ -505,6 +607,30 @@ inline vector<unsigned char> CS::readMessage(string filename)
 		result.push_back(s);
 		n = inputFile.peek();
 	} while (n != EOF);
+	return result;
+}
+
+inline vector<unsigned char> CS::readCipherMessage(string filename)
+{
+	vector<unsigned char> result;
+	ifstream inputFile;
+	inputFile.open(filename, std::ios_base::binary | std::ios_base::in);
+	if (!inputFile) {
+		string str = "Файл " + filename + " не существует";
+		MessageBox::Show(marshal_as<String^>(str), "Ошибка", MessageBoxButtons::OK, MessageBoxIcon::Warning);
+		throw std::invalid_argument("received negative value");
+	}
+
+	std::string str;
+	std::string file_contents;
+	while (std::getline(inputFile, str))
+	{
+		file_contents += str;
+		file_contents.push_back('\n');
+	}
+	for (int i = 0; i < file_contents.size()-1; i++) {
+		result.push_back(file_contents[i]);
+	}
 	return result;
 }
 
@@ -557,6 +683,44 @@ inline vector<vector<unsigned char>> CS::readTwoDimensionalVector(string filenam
 		}
 	} while (next != EOF);
 	return result;
+}
+
+inline vector<vector<vector<unsigned char>>> CS::readThreeDimensionalVector(string filename)
+{
+	vector<vector<vector<unsigned char>>> lambda(256, vector<vector<unsigned char>>(16, vector<unsigned char>(16, 0x00)));
+
+	ifstream inputFile;
+	inputFile.open(filename);
+	if (!inputFile) {
+		exit(1);
+	}
+	string s = "";
+	char next = ' ';
+	size_t i = 0;
+	size_t j = 0;
+	size_t k = 0;
+	do {
+		if (next == '\n') {
+			inputFile.get();
+			next = inputFile.peek();
+			if (next == '\n') {
+				++i;
+				j = 0;
+				k = 0;
+			}
+			else {
+				j++;
+				k = 0;
+			}
+		}
+		inputFile >> s;
+		next = inputFile.peek();
+		lambda[i][j][k] = hexToDec(s);
+		++k;
+
+	} while (next != EOF);
+
+	return lambda;
 }
 
 inline void CS::nextMessage()
