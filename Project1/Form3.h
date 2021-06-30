@@ -443,7 +443,7 @@ private: System::Void button4_Click(System::Object^ sender, System::EventArgs^ e
 	else {
 		string message = _cipher->decipher(marshal_as<string>(textBoxMessage->Text), marshal_as<string>(textBoxAssociatedData->Text), marshal_as<string>(textBoxCDWrite->Text));
 		progressBar1->Value = 80;
-		labelCondition->Text = "Запись расфрованных данных";
+		labelCondition->Text = "Запись расшифрованных данных";
 
 		ofstream outputFile;
 		outputFile.open(marshal_as<string>(textBoxOutputFile->Text), std::ios::app);
@@ -453,7 +453,9 @@ private: System::Void button4_Click(System::Object^ sender, System::EventArgs^ e
 
 		labelCondition->Text = "Работа завершена успешно";
 		progressBar1->Value = 100;
+		textBoxMessageNumber->Text = marshal_as<String^>(_cipher->getMessageNumber());
 	}
+
 }
 private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e) {
 	OpenFileDialog^ openDlg = gcnew OpenFileDialog();

@@ -23,17 +23,6 @@ public:
 	bool checkImitationInsert(string messageFilename, string associatedDataFilename, string calcKeyFilename = "");
 	string decipher(string messageFilename, string associatedDataFilename, string CFilename = "");
 
-private:
-	vector<vector<unsigned char>> _key;
-	vector<vector<unsigned char>> _iv;
-	vector<unsigned char> _alpha;
-	vector<unsigned char> _i0;
-	vector<vector<unsigned char>> _OLS1;
-	vector<vector<unsigned char>> _OLS2;
-	vector<vector<vector<unsigned char>>> _lambda;
-	size_t _messageNumber;
-	vector<vector<unsigned char>> _calculatedKey;
-	vector<vector<unsigned char>> _m;
 
 	// Умножение в GF(128)
 	size_t BIT(size_t value);
@@ -83,6 +72,7 @@ private:
 	// Вычисление имитовставки (метки)
 	vector<unsigned char> immitationInsert(vector<unsigned char> A, vector<vector<unsigned char>> m, vector<vector<unsigned char>> calculatedKey);
 
+
 	unsigned char hexToDec(string hex);
 	vector<unsigned char> readMessage(string filename);
 	vector<unsigned char> readCipherMessage(string filename);
@@ -90,6 +80,18 @@ private:
 	vector<vector<unsigned char>> readTwoDimensionalVector(string filename);
 	vector<vector<vector<unsigned char>>> readThreeDimensionalVector(string filename);
 	void nextMessage();
+
+private:
+	vector<vector<unsigned char>> _key;
+	vector<vector<unsigned char>> _iv;
+	vector<unsigned char> _alpha;
+	vector<unsigned char> _i0;
+	vector<vector<unsigned char>> _OLS1;
+	vector<vector<unsigned char>> _OLS2;
+	vector<vector<vector<unsigned char>>> _lambda;
+	size_t _messageNumber;
+	vector<vector<unsigned char>> _calculatedKey;
+	vector<vector<unsigned char>> _m;
 };
 
 inline CS::CS(vector<vector<unsigned char>> key, vector<vector<unsigned char>> iv, vector<unsigned char> alpha, vector<unsigned char> i0, vector<vector<vector<unsigned char>>> lambda, vector<vector<unsigned char>> OLS1, vector<vector<unsigned char>> OLS2)
@@ -705,9 +707,6 @@ inline vector<vector<unsigned char>> CS::readTwoDimensionalVector(string filenam
 		inputFile >> s;
 		next = inputFile.peek();
 		result[i].push_back(this->hexToDec(s));
-		if (result[i].size() == 255) {
-			std::cout << "qwe" << std::endl;
-		}
 	} while (next != EOF);
 	return result;
 }
